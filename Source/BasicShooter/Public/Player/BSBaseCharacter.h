@@ -23,6 +23,12 @@ struct FInputData
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	UInputAction* LookAround;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputAction* JumpAction;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputAction* RunAction;
 };
 
 UCLASS()
@@ -31,7 +37,10 @@ class BASICSHOOTER_API ABSBaseCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	ABSBaseCharacter();
+	ABSBaseCharacter(const FObjectInitializer& ObjInit);
+
+	UFUNCTION(BlueprintCallable,Category = "Movement")
+	bool IsRunning();
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	UCameraComponent* CameraComponent;
@@ -54,9 +63,13 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+private:
+	bool isRunningState;
 
 private:
 	void EnhancedInputMove(const FInputActionValue& Value);
 	void EnhancedInputLook(const FInputActionValue& Value);
+	void OnStartRun(const FInputActionValue& Value);
+	void OnEndRun(const FInputActionValue& Value);
 
 };

@@ -4,20 +4,25 @@
 #include "Engine/LocalPlayer.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-
+#include "Components/BSMovementComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacterInput, Log, Warning)
 
-ABSBaseCharacter::ABSBaseCharacter()
+ABSBaseCharacter::ABSBaseCharacter(const FObjectInitializer& ObjInit)
+	: Super(ObjInit.SetDefaultSubobjectClass<UBSMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	SpringArmComponent->SetupAttachment(RootComponent);
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
+}
+bool ABSBaseCharacter::IsRunning()
+{
+	return isRunningState;
 }
 
 void ABSBaseCharacter::BeginPlay()
@@ -48,6 +53,9 @@ void ABSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	{
 		EnhancedInputComponent->BindAction(InputData.MoveAction, ETriggerEvent::Triggered, this, &ABSBaseCharacter::EnhancedInputMove);
 		EnhancedInputComponent->BindAction(InputData.LookAround,ETriggerEvent::Triggered,this,&ABSBaseCharacter::EnhancedInputLook);
+		EnhancedInputComponent->BindAction(InputData.JumpAction,ETriggerEvent::Triggered,this,&ABSBaseCharacter::Jump);
+		EnhancedInputComponent->BindAction(InputData.RunAction,ETriggerEvent::Started,this,&ABSBaseCharacter::OnStartRun);
+		EnhancedInputComponent->BindAction(InputData.RunAction,ETriggerEvent::Completed,this,&ABSBaseCharacter::OnEndRun);
 	}
 }
 void ABSBaseCharacter::EnhancedInputMove(const FInputActionValue& Value)
@@ -74,4 +82,15 @@ void ABSBaseCharacter::EnhancedInputLook(const FInputActionValue& Value)
 	AddControllerPitchInput(LookAxisVector.Y);
 	AddControllerYawInput(LookAxisVector.X);
 }
+void ABSBaseCharacter::OnStartRun(const FInputActionValue& Value)
+{
+	isRunningState = true;
+}
+
+void ABSBaseCharacter::OnEndRun(const FInputActionValue& Value)
+{
+	isRunningState = false
+	;
+}
+
 
