@@ -41,6 +41,9 @@ public:
 
 	UFUNCTION(BlueprintCallable,Category = "Movement")
 	bool IsRunning();
+
+	UFUNCTION(BlueprintCallable,Category = "Movement")
+	const float GetDirection();
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	UCameraComponent* CameraComponent;
