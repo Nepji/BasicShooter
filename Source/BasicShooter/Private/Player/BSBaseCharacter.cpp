@@ -4,20 +4,45 @@
 #include "Engine/LocalPlayer.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Components/BSMovementComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter, Log, Warning)
 
-DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacterInput, Log, Warning)
-
-ABSBaseCharacter::ABSBaseCharacter()
+ABSBaseCharacter::ABSBaseCharacter(const FObjectInitializer& ObjInit)
+	: Super(ObjInit.SetDefaultSubobjectClass<UBSMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
-	SpringArmComponent->SetupAttachment(RootComponent);
+	SpringArmComponent->SetupAttachment(GetRootComponent());
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
+	
+	HealthComponent = CreateDefaultSubobject<UBSHealthComponent>("HealthComponent");
+
+	HealthTextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
+	HealthTextRenderComponent->SetupAttachment(GetRootComponent());
+}
+bool ABSBaseCharacter::IsRunning()
+{
+	return isRunningState;
+}
+
+const float ABSBaseCharacter::GetDirection()
+{
+	if(GetVelocity().IsZero())
+	{
+		return 0.0f;
+	}
+	const auto VelocityNormal = GetVelocity().GetSafeNormal();
+	const float AngleBetween = FMath::Acos(FVector::DotProduct(GetActorForwardVector(),VelocityNormal));
+	const auto CrossProduct = FVector::CrossProduct(GetActorForwardVector(),VelocityNormal);
+	const float Degrees = FMath::RadiansToDegrees(AngleBetween);
+
+	
+	return CrossProduct.IsZero()?Degrees:Degrees * FMath::Sign(CrossProduct.Z);
 }
 
 void ABSBaseCharacter::BeginPlay()
@@ -31,13 +56,20 @@ void ABSBaseCharacter::BeginPlay()
 			Subsystem->AddMappingContext(InputData.MappingContext, 0);
 		}
 	}
+
+	check(HealthComponent);
+	check(HealthTextRenderComponent);
+
+	OnHealthChange(HealthComponent->GetHealth());
+	HealthComponent->OnDeath.AddUObject(this,&ABSBaseCharacter::OnDeath);
+	HealthComponent->OnHealthChange.AddUObject(this,&ABSBaseCharacter::OnHealthChange);
 	
 }
 
 void ABSBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 }
 
 void ABSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -48,10 +80,14 @@ void ABSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	{
 		EnhancedInputComponent->BindAction(InputData.MoveAction, ETriggerEvent::Triggered, this, &ABSBaseCharacter::EnhancedInputMove);
 		EnhancedInputComponent->BindAction(InputData.LookAround,ETriggerEvent::Triggered,this,&ABSBaseCharacter::EnhancedInputLook);
+		EnhancedInputComponent->BindAction(InputData.JumpAction,ETriggerEvent::Triggered,this,&ABSBaseCharacter::Jump);
+		EnhancedInputComponent->BindAction(InputData.RunAction,ETriggerEvent::Started,this,&ABSBaseCharacter::OnStartRun);
+		EnhancedInputComponent->BindAction(InputData.RunAction,ETriggerEvent::Completed,this,&ABSBaseCharacter::OnEndRun);
 	}
 }
 void ABSBaseCharacter::EnhancedInputMove(const FInputActionValue& Value)
 {
+
 	const FVector2d MovementVector = Value.Get<FVector2d>();
 
 	if (GetController())
@@ -60,12 +96,17 @@ void ABSBaseCharacter::EnhancedInputMove(const FInputActionValue& Value)
 		const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		if(isRunningState)
+		{
+			AddMovementInput(ForwardDirection, 1);
+			return;
+		}
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 
-	UE_LOG(LogBaseCharacterInput, Log, TEXT("Movement %0.f, %0.f"), MovementVector.X, MovementVector.Y)
+	UE_LOG(LogBaseCharacter, Log, TEXT("Movement %0.f, %0.f"), MovementVector.X, MovementVector.Y)
 }
 void ABSBaseCharacter::EnhancedInputLook(const FInputActionValue& Value)
 {
@@ -74,4 +115,30 @@ void ABSBaseCharacter::EnhancedInputLook(const FInputActionValue& Value)
 	AddControllerPitchInput(LookAxisVector.Y);
 	AddControllerYawInput(LookAxisVector.X);
 }
+void ABSBaseCharacter::OnStartRun(const FInputActionValue& Value)
+{
+	isRunningState = true;
+}
+
+void ABSBaseCharacter::OnEndRun(const FInputActionValue& Value)
+{
+	isRunningState = false;
+}
+
+void ABSBaseCharacter::OnDeath()
+{
+	PlayAnimMontage(DeathAnimMontage);
+	GetCharacterMovement()->DisableMovement();
+	// Disable Camera Rotation with Pro
+	SetLifeSpan(ToDeathTimer);
+	if(Controller)
+	{
+		Controller->ChangeState(NAME_Spectating);
+	}
+}
+void ABSBaseCharacter::OnHealthChange(float Health)
+{
+	HealthTextRenderComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"),Health)));
+}
+
 
