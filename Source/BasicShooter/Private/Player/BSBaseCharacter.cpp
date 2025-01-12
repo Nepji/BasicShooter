@@ -7,7 +7,7 @@
 #include "Components/BSMovementComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 
-DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacterInput, Log, Warning)
+DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter, Log, Warning)
 
 ABSBaseCharacter::ABSBaseCharacter(const FObjectInitializer& ObjInit)
 	: Super(ObjInit.SetDefaultSubobjectClass<UBSMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -15,10 +15,15 @@ ABSBaseCharacter::ABSBaseCharacter(const FObjectInitializer& ObjInit)
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
-	SpringArmComponent->SetupAttachment(RootComponent);
+	SpringArmComponent->SetupAttachment(GetRootComponent());
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
+	
+	HealthComponent = CreateDefaultSubobject<UBSHealthComponent>("HealthComponent");
+
+	HealthTextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
+	HealthTextRenderComponent->SetupAttachment(GetRootComponent());
 }
 bool ABSBaseCharacter::IsRunning()
 {
@@ -51,13 +56,20 @@ void ABSBaseCharacter::BeginPlay()
 			Subsystem->AddMappingContext(InputData.MappingContext, 0);
 		}
 	}
+
+	check(HealthComponent);
+	check(HealthTextRenderComponent);
+
+	OnHealthChange(HealthComponent->GetHealth());
+	HealthComponent->OnDeath.AddUObject(this,&ABSBaseCharacter::OnDeath);
+	HealthComponent->OnHealthChange.AddUObject(this,&ABSBaseCharacter::OnHealthChange);
 	
 }
 
 void ABSBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 }
 
 void ABSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -94,7 +106,7 @@ void ABSBaseCharacter::EnhancedInputMove(const FInputActionValue& Value)
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 
-	UE_LOG(LogBaseCharacterInput, Log, TEXT("Movement %0.f, %0.f"), MovementVector.X, MovementVector.Y)
+	UE_LOG(LogBaseCharacter, Log, TEXT("Movement %0.f, %0.f"), MovementVector.X, MovementVector.Y)
 }
 void ABSBaseCharacter::EnhancedInputLook(const FInputActionValue& Value)
 {
@@ -110,8 +122,23 @@ void ABSBaseCharacter::OnStartRun(const FInputActionValue& Value)
 
 void ABSBaseCharacter::OnEndRun(const FInputActionValue& Value)
 {
-	isRunningState = false
-	;
+	isRunningState = false;
+}
+
+void ABSBaseCharacter::OnDeath()
+{
+	PlayAnimMontage(DeathAnimMontage);
+	GetCharacterMovement()->DisableMovement();
+	// Disable Camera Rotation with Pro
+	SetLifeSpan(ToDeathTimer);
+	if(Controller)
+	{
+		Controller->ChangeState(NAME_Spectating);
+	}
+}
+void ABSBaseCharacter::OnHealthChange(float Health)
+{
+	HealthTextRenderComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"),Health)));
 }
 
 

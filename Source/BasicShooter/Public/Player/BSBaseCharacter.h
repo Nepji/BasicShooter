@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "EnhancedInputSubsystemInterface.h"
 #include "Camera/CameraComponent.h"
+#include "Components/BSHealthComponent.h"
+#include "Components/TextRenderComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Character.h"
 #include "BSBaseCharacter.generated.h"
@@ -35,6 +37,9 @@ UCLASS()
 class BASICSHOOTER_API ABSBaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
+public:
+	UPROPERTY(EditDefaultsOnly,Blueprintable, Category = "Health")
+	float ToDeathTimer = 5.0;
 
 public:
 	ABSBaseCharacter(const FObjectInitializer& ObjInit);
@@ -44,13 +49,22 @@ public:
 
 	UFUNCTION(BlueprintCallable,Category = "Movement")
 	const float GetDirection();
+
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	UCameraComponent* CameraComponent;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	USpringArmComponent* SpringArmComponent;
-	
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UBSHealthComponent* HealthComponent;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UTextRenderComponent* HealthTextRenderComponent;
+
+	UPROPERTY(EditDefaultsOnly,Blueprintable, Category = "Animation")
+	UAnimMontage* DeathAnimMontage;	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = "Input Data")
 	FInputData InputData;
@@ -74,5 +88,7 @@ private:
 	void EnhancedInputLook(const FInputActionValue& Value);
 	void OnStartRun(const FInputActionValue& Value);
 	void OnEndRun(const FInputActionValue& Value);
+	void OnDeath();
+	void OnHealthChange(float Health);
 
 };
