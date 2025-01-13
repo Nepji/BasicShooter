@@ -15,4 +15,7 @@ class BASICSHOOTER_API ABGGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 public:
 	ABGGameModeBase();
+
+protected:
+
 };

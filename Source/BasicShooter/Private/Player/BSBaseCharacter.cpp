@@ -16,6 +16,7 @@ ABSBaseCharacter::ABSBaseCharacter(const FObjectInitializer& ObjInit)
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	SpringArmComponent->SetupAttachment(GetRootComponent());
+	SpringArmComponent->SocketOffset = FVector(0.0f,100.0f,80.0f);
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
@@ -24,6 +25,10 @@ ABSBaseCharacter::ABSBaseCharacter(const FObjectInitializer& ObjInit)
 
 	HealthTextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
 	HealthTextRenderComponent->SetupAttachment(GetRootComponent());
+	HealthTextRenderComponent->SetOwnerNoSee(true);
+
+	WeaponComponent = CreateDefaultSubobject<UBSWeaponComponent>("WeaponComponent");
+	
 }
 bool ABSBaseCharacter::IsRunning()
 {
@@ -57,12 +62,13 @@ void ABSBaseCharacter::BeginPlay()
 		}
 	}
 
-	check(HealthComponent);
-	check(HealthTextRenderComponent);
+
 
 	OnHealthChange(HealthComponent->GetHealth());
 	HealthComponent->OnDeath.AddUObject(this,&ABSBaseCharacter::OnDeath);
 	HealthComponent->OnHealthChange.AddUObject(this,&ABSBaseCharacter::OnHealthChange);
+
+
 	
 }
 
@@ -76,6 +82,10 @@ void ABSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	check(HealthComponent);
+	check(HealthTextRenderComponent);
+	check(WeaponComponent);
+
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(InputData.MoveAction, ETriggerEvent::Triggered, this, &ABSBaseCharacter::EnhancedInputMove);
@@ -83,6 +93,7 @@ void ABSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(InputData.JumpAction,ETriggerEvent::Triggered,this,&ABSBaseCharacter::Jump);
 		EnhancedInputComponent->BindAction(InputData.RunAction,ETriggerEvent::Started,this,&ABSBaseCharacter::OnStartRun);
 		EnhancedInputComponent->BindAction(InputData.RunAction,ETriggerEvent::Completed,this,&ABSBaseCharacter::OnEndRun);
+		EnhancedInputComponent->BindAction(InputData.FireAction,ETriggerEvent::Triggered,WeaponComponent,&UBSWeaponComponent::Fire);
 	}
 }
 void ABSBaseCharacter::EnhancedInputMove(const FInputActionValue& Value)
@@ -138,7 +149,8 @@ void ABSBaseCharacter::OnDeath()
 }
 void ABSBaseCharacter::OnHealthChange(float Health)
 {
-	HealthTextRenderComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"),Health)));
+	HealthTextRenderComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
+
 
 

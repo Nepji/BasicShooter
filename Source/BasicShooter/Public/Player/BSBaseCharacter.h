@@ -6,9 +6,11 @@
 #include "EnhancedInputSubsystemInterface.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BSHealthComponent.h"
+#include "Components/BSWeaponComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Character.h"
+#include "Weapon/BSBaseWeapon.h"
 #include "BSBaseCharacter.generated.h"
 
 
@@ -31,6 +33,9 @@ struct FInputData
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	UInputAction* RunAction;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputAction* FireAction;
 };
 
 UCLASS()
@@ -63,13 +68,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	UTextRenderComponent* HealthTextRenderComponent;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UBSWeaponComponent* WeaponComponent;
+
 	UPROPERTY(EditDefaultsOnly,Blueprintable, Category = "Animation")
 	UAnimMontage* DeathAnimMontage;	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = "Input Data")
 	FInputData InputData;
 
-	
 protected:
 	virtual void BeginPlay() override;
 	
