@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/BSMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter, Log, Warning)
@@ -28,7 +29,6 @@ ABSBaseCharacter::ABSBaseCharacter(const FObjectInitializer& ObjInit)
 	HealthTextRenderComponent->SetOwnerNoSee(true);
 
 	WeaponComponent = CreateDefaultSubobject<UBSWeaponComponent>("WeaponComponent");
-	
 }
 bool ABSBaseCharacter::IsRunning()
 {
@@ -93,7 +93,8 @@ void ABSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(InputData.JumpAction,ETriggerEvent::Triggered,this,&ABSBaseCharacter::Jump);
 		EnhancedInputComponent->BindAction(InputData.RunAction,ETriggerEvent::Started,this,&ABSBaseCharacter::OnStartRun);
 		EnhancedInputComponent->BindAction(InputData.RunAction,ETriggerEvent::Completed,this,&ABSBaseCharacter::OnEndRun);
-		EnhancedInputComponent->BindAction(InputData.FireAction,ETriggerEvent::Triggered,WeaponComponent,&UBSWeaponComponent::Fire);
+		EnhancedInputComponent->BindAction(InputData.FireAction,ETriggerEvent::Started,WeaponComponent,&UBSWeaponComponent::StartFire);
+		EnhancedInputComponent->BindAction(InputData.FireAction,ETriggerEvent::Completed,WeaponComponent,&UBSWeaponComponent::StopFire);
 	}
 }
 void ABSBaseCharacter::EnhancedInputMove(const FInputActionValue& Value)
@@ -107,11 +108,6 @@ void ABSBaseCharacter::EnhancedInputMove(const FInputActionValue& Value)
 		const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		if(isRunningState)
-		{
-			AddMovementInput(ForwardDirection, 1);
-			return;
-		}
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(RightDirection, MovementVector.X);
@@ -140,12 +136,16 @@ void ABSBaseCharacter::OnDeath()
 {
 	PlayAnimMontage(DeathAnimMontage);
 	GetCharacterMovement()->DisableMovement();
-	// Disable Camera Rotation with Pro
 	SetLifeSpan(ToDeathTimer);
+
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
+	
 	if(Controller)
 	{
 		Controller->ChangeState(NAME_Spectating);
 	}
+
+	
 }
 void ABSBaseCharacter::OnHealthChange(float Health)
 {

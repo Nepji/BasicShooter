@@ -16,7 +16,8 @@ class BASICSHOOTER_API UBSWeaponComponent : public UActorComponent
 public:	
 	UBSWeaponComponent();
 
-	void Fire();
+	void StartFire();
+	void StopFire();
 
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Weapon")

@@ -29,17 +29,26 @@ void UBSWeaponComponent::SpawnWeapon()
 		{
 			const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget,false);
 			CurrentWeapon->AttachToComponent(Character->GetMesh(),AttachmentRules,WeaponAttachSocket);
+			CurrentWeapon->SetOwner(Character);
 		}
 
 	}
 }
 
-void UBSWeaponComponent::Fire()
+void UBSWeaponComponent::StartFire()
 {
 	if(!CurrentWeapon)
 	{
 		return;
 	}
-	CurrentWeapon->Fire();
+	CurrentWeapon->StartFire();
 }
 
+void UBSWeaponComponent::StopFire()
+{
+	if(!CurrentWeapon)
+	{
+		return;
+	}
+	CurrentWeapon->StopFire();
+}

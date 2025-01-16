@@ -6,22 +6,43 @@
 #include "GameFramework/Actor.h"
 #include "BSBaseWeapon.generated.h"
 
+
 UCLASS()
-class BASICSHOOTER_API ABSBaseWeapon : public AActor
+class BASICSHOOTER_API ABSBaseWeapon  : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	ABSBaseWeapon();
 
-	virtual void Fire();
+	virtual void StartFire();
+	virtual void StopFire();
+	virtual void MakeShot();
 
 protected:
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category = "Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* MeshComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FName MuzzleSocketName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0))
+	float TraceMaxDistance = 100.0f;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float Damage = 10.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0))
+	float SprayRadius = 1.5f;
 protected:
 	virtual void BeginPlay() override;
+	APlayerController* GetPlayerController() const;
+	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation);
+	FVector			   GetMuzzleWorldLocation() const;
+	bool			   GetTraceData(FVector& TraceStart, FVector& TraceEnd);
+	void			   MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
+	
 
 
-
+	
 };
