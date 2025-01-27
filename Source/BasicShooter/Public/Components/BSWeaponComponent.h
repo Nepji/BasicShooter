@@ -18,19 +18,37 @@ public:
 
 	void StartFire();
 	void StopFire();
+	void NextWeapon();
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Weapon")
-	TSubclassOf<ABSBaseWeapon> WeaponClass;
+	TArray<TSubclassOf<ABSBaseWeapon>> WeaponClasses;
 	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Weapon")
-	FName WeaponAttachSocket;
+	FName WeaponAttachSocket = "WeaponSocket";
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Weapon")
+	FName WeaponArmorySocket = "ArmorySocket";
+
+	//We need one more Armory for Pistol or tiny weapon
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Weapon")
+	FName WeaponSecondaryArmorySocket = "SecondaryArmorySocket";
 protected:
 	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY()
 	ABSBaseWeapon* CurrentWeapon;
+
+	UPROPERTY()
+	TArray<ABSBaseWeapon*> Weapons;
+
+	int32 CurrentWeaponIndex = 0;
+
+private:
+	void AttachWeaponToSocket(ABSBaseWeapon* Weapon, USkeletalMeshComponent* SceneComponent, FName SocketName);
+	void EquipWeapon(int32 WeaponIndex);
 	void SpawnWeapon();
 
 		

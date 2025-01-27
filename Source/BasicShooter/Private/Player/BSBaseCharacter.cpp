@@ -95,6 +95,7 @@ void ABSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(InputData.RunAction,ETriggerEvent::Completed,this,&ABSBaseCharacter::OnEndRun);
 		EnhancedInputComponent->BindAction(InputData.FireAction,ETriggerEvent::Started,WeaponComponent,&UBSWeaponComponent::StartFire);
 		EnhancedInputComponent->BindAction(InputData.FireAction,ETriggerEvent::Completed,WeaponComponent,&UBSWeaponComponent::StopFire);
+		EnhancedInputComponent->BindAction(InputData.NextWeaponAction,ETriggerEvent::Triggered, WeaponComponent, &UBSWeaponComponent::NextWeapon);
 	}
 }
 void ABSBaseCharacter::EnhancedInputMove(const FInputActionValue& Value)
@@ -144,7 +145,8 @@ void ABSBaseCharacter::OnDeath()
 	{
 		Controller->ChangeState(NAME_Spectating);
 	}
-
+	WeaponComponent->StopFire();
+	
 	
 }
 void ABSBaseCharacter::OnHealthChange(float Health)

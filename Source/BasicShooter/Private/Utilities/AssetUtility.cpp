@@ -71,6 +71,10 @@ void UAssetUtility::SetPrefix() {
 
   for (UObject *Asset : AssetsArray) {
     const FString NewName = NewNameWithPrefix(Asset);
+  	if(NewName == Asset->GetName())
+  	{
+  		continue;
+  	}
     UEditorUtilityLibrary::RenameAsset(Asset, NewName);
   }
 }

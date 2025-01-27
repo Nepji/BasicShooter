@@ -24,10 +24,10 @@ protected:
 	UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FName MuzzleSocketName;
+	FName MuzzleSocketName = "MuzzleSocket";
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0))
-	float TraceMaxDistance = 100.0f;
+	float TraceMaxDistance = 1000.0f;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float Damage = 10.0f;
@@ -36,6 +36,7 @@ protected:
 	float SprayRadius = 1.5f;
 protected:
 	virtual void BeginPlay() override;
+
 	APlayerController* GetPlayerController() const;
 	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation);
 	FVector			   GetMuzzleWorldLocation() const;

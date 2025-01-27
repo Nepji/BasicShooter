@@ -16,7 +16,6 @@ class BASICSHOOTER_API ABSRifleWeapon : public ABSBaseWeapon
 public:
 	virtual void StartFire() override;
 	virtual void StopFire() override;
-	virtual void MakeShot() override;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0))

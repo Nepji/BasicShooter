@@ -36,6 +36,9 @@ struct FInputData
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	UInputAction* FireAction;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputAction* NextWeaponAction;
 };
 
 UCLASS()
