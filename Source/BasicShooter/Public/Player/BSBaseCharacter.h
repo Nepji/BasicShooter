@@ -14,6 +14,8 @@
 #include "BSBaseCharacter.generated.h"
 
 
+
+
 USTRUCT(Blueprintable)
 struct FInputData
 {
@@ -39,6 +41,9 @@ struct FInputData
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	UInputAction* NextWeaponAction;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputAction* ReloadAction;
 };
 
 UCLASS()

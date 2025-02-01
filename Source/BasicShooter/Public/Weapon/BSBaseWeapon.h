@@ -3,14 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BSCoreTypes.h"
 #include "GameFramework/Actor.h"
 #include "BSBaseWeapon.generated.h"
 
 
+
+
+
 UCLASS()
-class BASICSHOOTER_API ABSBaseWeapon  : public AActor
+class BASICSHOOTER_API ABSBaseWeapon : public AActor
 {
 	GENERATED_BODY()
+
+public:
+	FOnClipEmptySignature OnClipEmptySignature;
 
 public:
 	ABSBaseWeapon();
@@ -18,32 +25,45 @@ public:
 	virtual void StartFire();
 	virtual void StopFire();
 	virtual void MakeShot();
+	virtual bool CanReload();
+	virtual void Reload();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* MeshComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	FName MuzzleSocketName = "MuzzleSocket";
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0), Category = "Weapon")
 	float TraceMaxDistance = 1000.0f;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	float Damage = 10.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0), Category = "Weapon")
 	float SprayRadius = 1.5f;
+
+	UPROPERTY(EditDefaultsOnly, Blueprintable, Category = "Weapon")
+	FAmmoData DefaultAmmo{ 30, 30, false, false};
+
 protected:
 	virtual void BeginPlay() override;
 
 	APlayerController* GetPlayerController() const;
 	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation);
-	FVector			   GetMuzzleWorldLocation() const;
-	bool			   GetTraceData(FVector& TraceStart, FVector& TraceEnd);
-	void			   MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
+	FVector GetMuzzleWorldLocation() const;
+	bool GetTraceData(FVector& TraceStart, FVector& TraceEnd);
+	
+	void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
+
+	void DecreaseAmmo();
+	void ChangeClip();
+	void LogAmmo();
+	bool IsAmmoEmpty() const;
+	bool IsClipEmpty() const;
 	
 
-
-	
+private:
+	FAmmoData CurrentAmmo;
 };

@@ -3,33 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BSCoreTypes.h"
 #include "Components/ActorComponent.h"
 #include "BSHealthComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnDeath)
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChange,float)
 
-USTRUCT(Blueprintable)
-struct FHealthData
-{
-	GENERATED_BODY()
 
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	bool Curable = true;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	bool AutoHeal = false;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0.0f))
-	float HealDelay = 3.0f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0.1f))
-	float HealRate = 3.0f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0.0f))
-	float HealingValue = 1.0f;
-};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BASICSHOOTER_API UBSHealthComponent : public UActorComponent
@@ -44,15 +25,17 @@ public:
 public:	
 	UBSHealthComponent();
 
-	UFUNCTION(Blueprintable)
+	UFUNCTION(Blueprintable,BlueprintCallable, Category = "Health")
 	const float GetHealth();
 
-	UFUNCTION(Blueprintable)
+	UFUNCTION(Blueprintable,BlueprintCallable, Category = "Health")
 	const bool IsDead();
 
-	UFUNCTION(Blueprintable)
+	UFUNCTION(Blueprintable,BlueprintCallable, Category = "Health")
 	void setHealth(float Health);
 
+	UFUNCTION(Blueprintable,BlueprintCallable, Category = "Health")
+	float GetHealthPercent() const;
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0.0f))

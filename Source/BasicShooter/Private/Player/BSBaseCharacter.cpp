@@ -17,11 +17,11 @@ ABSBaseCharacter::ABSBaseCharacter(const FObjectInitializer& ObjInit)
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	SpringArmComponent->SetupAttachment(GetRootComponent());
-	SpringArmComponent->SocketOffset = FVector(0.0f,100.0f,80.0f);
+	SpringArmComponent->SocketOffset = FVector(0.0f, 100.0f, 80.0f);
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
-	
+
 	HealthComponent = CreateDefaultSubobject<UBSHealthComponent>("HealthComponent");
 
 	HealthTextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
@@ -37,65 +37,60 @@ bool ABSBaseCharacter::IsRunning()
 
 const float ABSBaseCharacter::GetDirection()
 {
-	if(GetVelocity().IsZero())
+	if (GetVelocity().IsZero())
 	{
 		return 0.0f;
 	}
 	const auto VelocityNormal = GetVelocity().GetSafeNormal();
-	const float AngleBetween = FMath::Acos(FVector::DotProduct(GetActorForwardVector(),VelocityNormal));
-	const auto CrossProduct = FVector::CrossProduct(GetActorForwardVector(),VelocityNormal);
+	const float AngleBetween = FMath::Acos(FVector::DotProduct(GetActorForwardVector(), VelocityNormal));
+	const auto CrossProduct = FVector::CrossProduct(GetActorForwardVector(), VelocityNormal);
 	const float Degrees = FMath::RadiansToDegrees(AngleBetween);
 
-	
-	return CrossProduct.IsZero()?Degrees:Degrees * FMath::Sign(CrossProduct.Z);
+	return CrossProduct.IsZero() ? Degrees : Degrees * FMath::Sign(CrossProduct.Z);
 }
 
 void ABSBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	check(HealthComponent);
+	check(HealthTextRenderComponent);
+	check(WeaponComponent);
+
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+			ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(InputData.MappingContext, 0);
 		}
 	}
 
-
-
 	OnHealthChange(HealthComponent->GetHealth());
-	HealthComponent->OnDeath.AddUObject(this,&ABSBaseCharacter::OnDeath);
-	HealthComponent->OnHealthChange.AddUObject(this,&ABSBaseCharacter::OnHealthChange);
-
-
-	
+	HealthComponent->OnDeath.AddUObject(this, &ABSBaseCharacter::OnDeath);
+	HealthComponent->OnHealthChange.AddUObject(this, &ABSBaseCharacter::OnHealthChange);
 }
 
 void ABSBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
 }
 
 void ABSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	check(HealthComponent);
-	check(HealthTextRenderComponent);
-	check(WeaponComponent);
-
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(InputData.MoveAction, ETriggerEvent::Triggered, this, &ABSBaseCharacter::EnhancedInputMove);
-		EnhancedInputComponent->BindAction(InputData.LookAround,ETriggerEvent::Triggered,this,&ABSBaseCharacter::EnhancedInputLook);
-		EnhancedInputComponent->BindAction(InputData.JumpAction,ETriggerEvent::Triggered,this,&ABSBaseCharacter::Jump);
-		EnhancedInputComponent->BindAction(InputData.RunAction,ETriggerEvent::Started,this,&ABSBaseCharacter::OnStartRun);
-		EnhancedInputComponent->BindAction(InputData.RunAction,ETriggerEvent::Completed,this,&ABSBaseCharacter::OnEndRun);
-		EnhancedInputComponent->BindAction(InputData.FireAction,ETriggerEvent::Started,WeaponComponent,&UBSWeaponComponent::StartFire);
-		EnhancedInputComponent->BindAction(InputData.FireAction,ETriggerEvent::Completed,WeaponComponent,&UBSWeaponComponent::StopFire);
-		EnhancedInputComponent->BindAction(InputData.NextWeaponAction,ETriggerEvent::Triggered, WeaponComponent, &UBSWeaponComponent::NextWeapon);
+		EnhancedInputComponent->BindAction(InputData.LookAround, ETriggerEvent::Triggered, this, &ABSBaseCharacter::EnhancedInputLook);
+		EnhancedInputComponent->BindAction(InputData.JumpAction, ETriggerEvent::Triggered, this, &ABSBaseCharacter::Jump);
+		EnhancedInputComponent->BindAction(InputData.RunAction, ETriggerEvent::Started, this, &ABSBaseCharacter::OnStartRun);
+		EnhancedInputComponent->BindAction(InputData.RunAction, ETriggerEvent::Completed, this, &ABSBaseCharacter::OnEndRun);
+		EnhancedInputComponent->BindAction(InputData.FireAction, ETriggerEvent::Started, WeaponComponent, &UBSWeaponComponent::StartFire);
+		EnhancedInputComponent->BindAction(InputData.FireAction, ETriggerEvent::Completed, WeaponComponent, &UBSWeaponComponent::StopFire);
+		EnhancedInputComponent->BindAction(InputData.NextWeaponAction, ETriggerEvent::Triggered, WeaponComponent, &UBSWeaponComponent::NextWeapon);
+		EnhancedInputComponent->BindAction(InputData.ReloadAction, ETriggerEvent::Triggered, WeaponComponent, &UBSWeaponComponent::Reload);
 	}
 }
 void ABSBaseCharacter::EnhancedInputMove(const FInputActionValue& Value)
@@ -125,6 +120,7 @@ void ABSBaseCharacter::EnhancedInputLook(const FInputActionValue& Value)
 }
 void ABSBaseCharacter::OnStartRun(const FInputActionValue& Value)
 {
+	WeaponComponent->StopFire();
 	isRunningState = true;
 }
 
@@ -140,19 +136,14 @@ void ABSBaseCharacter::OnDeath()
 	SetLifeSpan(ToDeathTimer);
 
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
-	
-	if(Controller)
+
+	if (Controller)
 	{
 		Controller->ChangeState(NAME_Spectating);
 	}
 	WeaponComponent->StopFire();
-	
-	
 }
 void ABSBaseCharacter::OnHealthChange(float Health)
 {
 	HealthTextRenderComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
-
-
-

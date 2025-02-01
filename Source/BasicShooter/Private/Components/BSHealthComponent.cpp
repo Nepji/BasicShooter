@@ -21,7 +21,7 @@ const bool UBSHealthComponent::IsDead()
 void UBSHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	checkf(MaxHealth > 0, TEXT("MaxHealth cannot be less or equel zero"));
 	setHealth(MaxHealth);
 	if (AActor* ComponentOwner = GetOwner())
 	{
@@ -61,8 +61,12 @@ void UBSHealthComponent::HealUpdate()
 
 void UBSHealthComponent::setHealth(float NewHealth)
 {
-	Health = FMath::Clamp(NewHealth,0.0f,MaxHealth);
+	Health = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
 	OnHealthChange.Broadcast(Health);
+}
+float UBSHealthComponent::GetHealthPercent() const
+{
+	return Health / MaxHealth;
 }
 
 

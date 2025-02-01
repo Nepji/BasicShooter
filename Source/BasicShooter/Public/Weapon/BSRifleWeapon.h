@@ -6,9 +6,6 @@
 #include "Weapon/BSBaseWeapon.h"
 #include "BSRifleWeapon.generated.h"
 
-/**
- *
- */
 UCLASS()
 class BASICSHOOTER_API ABSRifleWeapon : public ABSBaseWeapon
 {

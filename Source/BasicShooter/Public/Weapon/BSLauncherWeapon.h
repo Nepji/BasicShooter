@@ -8,7 +8,7 @@
 #include "BSLauncherWeapon.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BASICSHOOTER_API ABSLauncherWeapon : public ABSBaseWeapon
@@ -18,7 +18,8 @@ class BASICSHOOTER_API ABSLauncherWeapon : public ABSBaseWeapon
 public:
 	virtual void StartFire() override;
 	virtual void MakeShot() override;
+
 protected:
-	UPROPERTY(EditDefaultsOnly,Blueprintable,Category = "Weapon")
+	UPROPERTY(EditDefaultsOnly, Blueprintable, Category = "Weapon")
 	TSubclassOf<AActor> ProjectileClass;
 };

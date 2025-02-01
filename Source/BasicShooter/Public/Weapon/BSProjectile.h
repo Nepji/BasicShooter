@@ -19,6 +19,7 @@ public:
 public:	
 	void SetShotDirection(const FVector& Direction);
 	
+	
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	USphereComponent* CollisionComponent;
@@ -28,6 +29,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly)
 	UProjectileMovementComponent* MovementComponent;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ProjectileLifeSpan = 10.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float DamageAmount = 50.0f;
@@ -43,8 +47,13 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	AController* GetController() const; 
+	AController* GetController() const;
+
 
 private:
 	FVector ShotDirection;
+	FTimerHandle ProjectileLifeSpanHandle;
+
+private:
+	void LifeSpanOver();
 };

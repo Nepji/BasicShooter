@@ -2,7 +2,6 @@
 
 
 #include "Weapon/BSProjectile.h"
-
 #include "Kismet/GameplayStatics.h"
 
 ABSProjectile::ABSProjectile()
@@ -37,7 +36,7 @@ void ABSProjectile::OnProjectileHit(
 		GetActorLocation(),			//
 		DamageRadius,				//
 		UDamageType::StaticClass(), //
-		{ GetOwner() },			//
+		{ GetOwner() },			    //
 		this,						//
 		GetController(),			//
 		CentreFullDamage);			//
@@ -51,12 +50,18 @@ void ABSProjectile::BeginPlay()
 	check(MovementComponent);
 	CollisionComponent->OnComponentHit.AddDynamic(this, &ABSProjectile::OnProjectileHit);
 	MovementComponent->Velocity = ShotDirection * MovementComponent->InitialSpeed;
+	GetWorldTimerManager().SetTimer(ProjectileLifeSpanHandle,this,&ABSProjectile::LifeSpanOver,ProjectileLifeSpan,false);
 }
 
 AController* ABSProjectile::GetController() const
 {
 	const auto Pawn = Cast<APawn>(GetOwner());
-	return Pawn?Pawn->GetController():nullptr;
+	return Pawn ? Pawn->GetController() : nullptr;
+}
+void ABSProjectile::LifeSpanOver()
+{
+	MovementComponent->StopMovementImmediately();
+	Destroy();
 }
 
 void ABSProjectile::SetShotDirection(const FVector& Direction)
