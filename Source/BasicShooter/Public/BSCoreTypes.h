@@ -9,6 +9,11 @@ class ABSBaseWeapon;
 DECLARE_MULTICAST_DELEGATE(FOnClipEmptySignature)
 // AnimNotify
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnNotifiedSignature, USkeletalMeshComponent*)
+//Health
+DECLARE_MULTICAST_DELEGATE(FOnDeath)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChange,float)
+//Pickup
+DECLARE_MULTICAST_DELEGATE(FOnPickupTakenSignature)
 	//
 	// STRUCT
 	//
@@ -40,6 +45,17 @@ struct FWeaponData
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	UAnimMontage* ReloadAnimation;
+};
+USTRUCT(Blueprintable)
+struct FWeaponUIData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "UI")
+	UTexture2D* MainIcon;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "UI")
+	UTexture2D* CrossHairIcon;
 };
 // Health Component
 USTRUCT(Blueprintable)

@@ -51,12 +51,20 @@ void UBSHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, con
 
 void UBSHealthComponent::HealUpdate()
 {
-	setHealth(Health+HealthData.HealingValue);
+	setHealth(Health + HealthData.HealingValue);
 
-	if(Health == MaxHealth)
+	if (Health == MaxHealth)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
 	}
+}
+bool UBSHealthComponent::HealthIsFull() const
+{
+	if(Health == MaxHealth)
+	{
+		return true;
+	}
+	return false;
 }
 
 void UBSHealthComponent::setHealth(float NewHealth)
@@ -67,6 +75,16 @@ void UBSHealthComponent::setHealth(float NewHealth)
 float UBSHealthComponent::GetHealthPercent() const
 {
 	return Health / MaxHealth;
+}
+bool UBSHealthComponent::TryAddHealth(int32 AmountOfHealth)
+{
+	if(IsDead() || HealthIsFull())
+	{
+		return false;
+	}
+	const float NewHealth = Health + AmountOfHealth;
+	setHealth(NewHealth);
+	return true;
 }
 
 

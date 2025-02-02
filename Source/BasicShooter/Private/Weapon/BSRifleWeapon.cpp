@@ -7,7 +7,7 @@
 
 void ABSRifleWeapon::StartFire()
 {
-	MakeShot();
+	Super::StartFire();
 	GetWorldTimerManager().SetTimer(ShotTimerHandle,this,&ABSBaseWeapon::MakeShot,FireRate,true);
 }
 void ABSRifleWeapon::StopFire()

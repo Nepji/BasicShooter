@@ -14,5 +14,5 @@ class BASICSHOOTER_API ABSPistolWeapon : public ABSBaseWeapon
 {
 	GENERATED_BODY()
 public:
-	virtual void StartFire() override;
+
 };

@@ -27,6 +27,9 @@ public:
 	virtual void MakeShot();
 	virtual bool CanReload();
 	virtual void Reload();
+	FWeaponUIData GetUIData() const;
+	FAmmoData GetAmmoData() const;
+	bool TryAddAmmo(int32 AmountOfAmmo);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -47,6 +50,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Blueprintable, Category = "Weapon")
 	FAmmoData DefaultAmmo{ 30, 30, false, false};
 
+	UPROPERTY(EditDefaultsOnly, Blueprintable, Category = "Weapon")
+	FWeaponUIData UIData;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -62,6 +68,7 @@ protected:
 	void LogAmmo();
 	bool IsAmmoEmpty() const;
 	bool IsClipEmpty() const;
+	bool IsAmmoFull() const;
 	
 
 private:

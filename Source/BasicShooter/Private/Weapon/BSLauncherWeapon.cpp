@@ -4,10 +4,6 @@
 
 #include "Kismet/GameplayStatics.h"
 
-void ABSLauncherWeapon::StartFire()
-{
-	MakeShot();
-}
 void ABSLauncherWeapon::MakeShot()
 {
 	if (!GetWorld() || IsAmmoEmpty())

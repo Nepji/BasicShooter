@@ -22,7 +22,11 @@ public:
 	bool CanFire() const;
 	bool CanReload() const;
 	void Reload();
+	bool GetWeaponUIData(FWeaponUIData& UIData) const;
+	bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
+	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	bool TryToAddAmmo(int32 AmountOfAmmo, TSubclassOf<ABSBaseWeapon> WeaponType = nullptr);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")

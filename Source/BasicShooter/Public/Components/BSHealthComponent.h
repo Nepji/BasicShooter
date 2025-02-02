@@ -7,8 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "BSHealthComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnDeath)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChange,float)
+
 
 
 
@@ -34,8 +33,12 @@ public:
 	UFUNCTION(Blueprintable,BlueprintCallable, Category = "Health")
 	void setHealth(float Health);
 
-	UFUNCTION(Blueprintable,BlueprintCallable, Category = "Health")
+	UFUNCTION(Blueprintable, BlueprintCallable, Category = "Health")
 	float GetHealthPercent() const;
+
+	UFUNCTION(Blueprintable, BlueprintCallable, Category = "Health")
+	bool TryAddHealth(int32 AmountOfHealth);
+
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0.0f))
@@ -55,5 +58,6 @@ private:
 	UFUNCTION(Blueprintable)
 	void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	void HealUpdate();
+	bool HealthIsFull() const;
 	
 };

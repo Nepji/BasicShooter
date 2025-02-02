@@ -2,7 +2,3 @@
 
 
 #include "Weapon/BSPistolWeapon.h"
-void ABSPistolWeapon::StartFire()
-{
-	MakeShot();
-}

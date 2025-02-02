@@ -41,6 +41,8 @@ void UBSWeaponComponent::EquipWeapon(int32 WeaponIndex)
 	{
 		return;
 	}
+	
+	ReloadAnimationInProgress = false;
 	if (const ACharacter* Character = Cast<ACharacter>(GetOwner()))
 	{
 		if (CurrentWeapon)
@@ -147,6 +149,7 @@ void UBSWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComp)
 		if (Character->GetMesh() == MeshComp)
 		{
 			ReloadAnimationInProgress = false;
+			CurrentWeapon->Reload();
 		}
 	}
 }
@@ -199,15 +202,32 @@ void UBSWeaponComponent::Reload()
 {
 	ChangeClip();
 }
+bool UBSWeaponComponent::GetWeaponUIData(FWeaponUIData& UIData) const
+{
+	if (CurrentWeapon)
+	{
+		UIData = CurrentWeapon->GetUIData();
+		return true;
+	}
+	return false;
+}
+bool UBSWeaponComponent::GetWeaponAmmoData(FAmmoData& AmmoData) const
+{
+	if (CurrentWeapon)
+	{
+		AmmoData = CurrentWeapon->GetAmmoData();
+		return true;
+	}
+	return false;
+}
 void UBSWeaponComponent::ChangeClip()
 {
-	if (!CanReload())
+	if (CanReload())
 	{
 		return;
 	}
 	CurrentWeapon->StopFire();
 	ReloadAnimationInProgress = true;
-	CurrentWeapon->Reload();
 	PlayAnimMontage(CurrentReloadAnimation);
 }
 void UBSWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -220,4 +240,23 @@ void UBSWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 	Weapons.Empty();
 	Super::EndPlay(EndPlayReason);
+}
+bool UBSWeaponComponent::TryToAddAmmo(int32 AmountOfAmmo, TSubclassOf<ABSBaseWeapon> WeaponType)
+{
+	bool bSuccess = false;
+	for(const auto Weapon : Weapons)
+	{
+		if(!Weapon)
+		{
+			continue;
+		}
+		if (!WeaponType || Weapon->IsA(WeaponType))
+		{
+			if(Weapon->TryAddAmmo(AmountOfAmmo))
+			{
+				bSuccess = true;
+			}
+		}
+	}
+	return bSuccess;
 }

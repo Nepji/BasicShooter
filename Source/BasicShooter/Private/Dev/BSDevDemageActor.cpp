@@ -5,22 +5,22 @@
 
 #include "Kismet/GameplayStatics.h"
 
-ABSDevDemageActor::ABSDevDemageActor()
+ABSDevDamegeActor::ABSDevDamegeActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	SceneComponent = CreateDefaultSubobject<USceneComponent>("SceneConponent");
+	SceneComponent = CreateDefaultSubobject<USceneComponent>("SceneComponent");
 	SetRootComponent(SceneComponent);
 
 }
 
-void ABSDevDemageActor::BeginPlay()
+void ABSDevDamegeActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-void ABSDevDemageActor::Tick(float DeltaTime)
+void ABSDevDamegeActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 

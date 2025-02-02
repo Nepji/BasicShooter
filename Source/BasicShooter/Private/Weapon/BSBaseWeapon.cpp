@@ -13,12 +13,16 @@ ABSBaseWeapon::ABSBaseWeapon()
 	PrimaryActorTick.bCanEverTick = false;
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
 	SetRootComponent(MeshComponent);
-
-	CurrentAmmo = DefaultAmmo;
 }
 
 void ABSBaseWeapon::StartFire()
 {
+	if(IsClipEmpty())
+	{
+		OnClipEmptySignature.Broadcast();
+		return;
+	}
+	MakeShot();
 }
 
 void ABSBaseWeapon::StopFire()
@@ -59,7 +63,7 @@ void ABSBaseWeapon::MakeShot()
 }
 bool ABSBaseWeapon::CanReload()
 {
-	if(CurrentAmmo.BulletsInClip == DefaultAmmo.BulletsInClip || IsAmmoEmpty())
+	if(IsAmmoFull() || !CurrentAmmo.BulletAmount)
 	{
 		return false;
 	}
@@ -69,6 +73,24 @@ void ABSBaseWeapon::Reload()
 {
 	ChangeClip();
 }
+FWeaponUIData ABSBaseWeapon::GetUIData() const
+{
+	return UIData;
+}
+FAmmoData ABSBaseWeapon::GetAmmoData() const
+{
+	return CurrentAmmo;
+}
+bool ABSBaseWeapon::TryAddAmmo(int32 AmountOfAmmo)
+{
+	if(CurrentAmmo.Infinite || IsAmmoFull())
+	{
+		return false;
+	}
+
+	CurrentAmmo.BulletAmount = FMath::Clamp(CurrentAmmo.BulletAmount + AmountOfAmmo, 0, DefaultAmmo.BulletAmount);
+	return true;
+}
 
 void ABSBaseWeapon::BeginPlay()
 {
@@ -77,6 +99,7 @@ void ABSBaseWeapon::BeginPlay()
 	check(MeshComponent);
 	checkf(DefaultAmmo.BulletAmount >= 0, TEXT("Bullets count coudn`t be less of zero"));
 	checkf(DefaultAmmo.BulletsInClip >= 0, TEXT("Bullets in Clip count coudn`t be less of zero"));
+	CurrentAmmo = DefaultAmmo;
 }
 
 APlayerController* ABSBaseWeapon::GetPlayerController() const
@@ -137,10 +160,8 @@ void ABSBaseWeapon::DecreaseAmmo()
 	CurrentAmmo.BulletsInClip--;
 	LogAmmo();
 	
-	if (IsClipEmpty() && CanReload())
+	if (IsClipEmpty())
 	{
-		const auto Character = Cast<ACharacter>(GetOwner());
-		const auto Mesh = Character->GetMesh();
 		OnClipEmptySignature.Broadcast();
 	}
 }
@@ -175,5 +196,9 @@ bool ABSBaseWeapon::IsAmmoEmpty() const
 }
 bool ABSBaseWeapon::IsClipEmpty() const
 {
-	return !CurrentAmmo.BulletsInClip;
+	return CurrentAmmo.BulletsInClip <= 0;
+}
+bool ABSBaseWeapon::IsAmmoFull() const
+{
+	return CurrentAmmo.BulletsInClip == DefaultAmmo.BulletsInClip && CurrentAmmo.BulletAmount == DefaultAmmo.BulletAmount;
 }

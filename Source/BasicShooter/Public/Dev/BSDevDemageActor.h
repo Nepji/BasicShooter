@@ -7,7 +7,7 @@
 #include "BSDevDemageActor.generated.h"
 
 UCLASS()
-class BASICSHOOTER_API ABSDevDemageActor : public AActor
+class BASICSHOOTER_API ABSDevDamegeActor : public AActor
 {
 	GENERATED_BODY()
 
@@ -31,7 +31,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Heal = false;
 public:	
-	ABSDevDemageActor();
+	ABSDevDamegeActor();
 
 protected:
 	virtual void BeginPlay() override;
