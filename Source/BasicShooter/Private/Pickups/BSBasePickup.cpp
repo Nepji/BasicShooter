@@ -22,13 +22,14 @@ ABSBasePickup::ABSBasePickup()
 	SetRootComponent(CollisionComponent);
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
+	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MeshComponent->SetupAttachment(GetRootComponent());
 }
 
 void ABSBasePickup::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	GenerateRotationYaw();
 }
 void ABSBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
 {
@@ -54,6 +55,11 @@ bool ABSBasePickup::PickUpTo(APawn* PlayerPawn)
 void ABSBasePickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	AddActorLocalRotation(FRotator(0.0f, RotationYaw, 0.0f));
+}
+void ABSBasePickup::GenerateRotationYaw()
+{
+	const auto Direction = FMath::RandBool() ? 1.0f : -1.0f;
+	RotationYaw = FMath::RandRange(1.0f,2.0f) * Direction;
 }
 

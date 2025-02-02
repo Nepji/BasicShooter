@@ -32,4 +32,9 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+private:
+	float RotationYaw = 0.0f;
+private:
+	void GenerateRotationYaw();
+
 };

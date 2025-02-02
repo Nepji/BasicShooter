@@ -28,12 +28,12 @@ void ABSPickupHUB::SpawnPickup()
 	}
 
 	const FTransform SpawnTransform(FRotator::ZeroRotator, GetActorLocation());
-	if (auto Pickup = GetWorld()->SpawnActorDeferred<ABSBasePickup>(Pickups[CurrentPickupIndex], SpawnTransform))
+	CurrentPickup = GetWorld()->SpawnActorDeferred<ABSBasePickup>(Pickups[CurrentPickupIndex], SpawnTransform);
+	if (CurrentPickup)
 	{
-		Pickup->SetOwner(this);
-		Pickup->FinishSpawning(SpawnTransform);
-		Pickup->OnPickupTakenSignature.AddUObject(this,&ABSPickupHUB::OnPickupTaken);
-		CurrentPickup = Pickup;
+		CurrentPickup->SetOwner(this);
+		CurrentPickup->FinishSpawning(SpawnTransform);
+		CurrentPickup->OnPickupTakenSignature.AddUObject(this,&ABSPickupHUB::OnPickupTaken);
 	}
 }
 void ABSPickupHUB::OnPickupTaken()
@@ -41,5 +41,6 @@ void ABSPickupHUB::OnPickupTaken()
 	GetWorld()->GetTimerManager().SetTimer(PickupRespawnTimerHandle,this,&ABSPickupHUB::SpawnPickup,RespawnRate,false);
 	CurrentPickupIndex = (CurrentPickupIndex + 1) % Pickups.Num();
 	CurrentPickup->Destroy();
+
 }
 

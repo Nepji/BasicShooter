@@ -63,7 +63,7 @@ void ABSBaseWeapon::MakeShot()
 }
 bool ABSBaseWeapon::CanReload()
 {
-	if(IsAmmoFull() || !CurrentAmmo.BulletAmount)
+	if(IsAmmoFull() || !CurrentAmmo.BulletAmount || IsClipEmpty())
 	{
 		return false;
 	}

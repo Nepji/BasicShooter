@@ -14,10 +14,6 @@ bool ABSAmmoPickup::PickUpTo(APawn* PlayerPawn)
 	{
 		return false;
 	}
-	if(!Super::PickUpTo(PlayerPawn))
-	{
-		return false;
-	}
 	const auto WeaponComponent = BSCoreUtils::GetComponent<UBSWeaponComponent>(PlayerPawn);
 	if(!WeaponComponent)
 	{
