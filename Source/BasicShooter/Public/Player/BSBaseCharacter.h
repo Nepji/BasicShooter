@@ -104,6 +104,6 @@ private:
 	void OnStartRun(const FInputActionValue& Value);
 	void OnEndRun(const FInputActionValue& Value);
 	void OnDeath();
-	void OnHealthChange(float Health);
+	void OnHealthChange(float Health, float HealthDelta);
 
 };

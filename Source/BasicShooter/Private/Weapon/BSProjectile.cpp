@@ -2,6 +2,8 @@
 
 
 #include "Weapon/BSProjectile.h"
+
+#include "Components/BSWeaponFXComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ABSProjectile::ABSProjectile()
@@ -12,6 +14,7 @@ ABSProjectile::ABSProjectile()
 	CollisionComponent->InitSphereRadius(15.0f);
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
 	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	CollisionComponent->bReturnMaterialOnMove = true;
 
 	SetRootComponent(CollisionComponent);
 
@@ -20,6 +23,8 @@ ABSProjectile::ABSProjectile()
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
 	MovementComponent->InitialSpeed = 20.0f;
+
+	WeaponFXComponent = CreateDefaultSubobject<UBSWeaponFXComponent>("WeaponFXComponent");
 }
 
 void ABSProjectile::OnProjectileHit(
@@ -41,13 +46,16 @@ void ABSProjectile::OnProjectileHit(
 		GetController(),			//
 		CentreFullDamage);			//
 	DrawDebugSphere(GetWorld(),GetActorLocation(),DamageRadius,24,FColor::Red,false, 5.0f);
+	WeaponFXComponent->PlayImpactFX(Hit);
 	Destroy();
 }
 void ABSProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
+	check(CollisionComponent);
 	check(MovementComponent);
+	check(WeaponFXComponent);
 	CollisionComponent->OnComponentHit.AddDynamic(this, &ABSProjectile::OnProjectileHit);
 	MovementComponent->Velocity = ShotDirection * MovementComponent->InitialSpeed;
 	GetWorldTimerManager().SetTimer(ProjectileLifeSpanHandle,this,&ABSProjectile::LifeSpanOver,ProjectileLifeSpan,false);

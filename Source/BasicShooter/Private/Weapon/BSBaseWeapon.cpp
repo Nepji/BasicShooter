@@ -2,6 +2,8 @@
 #include "Weapon/BSBaseWeapon.h"
 
 #include "BSBaseCharacter.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
@@ -13,11 +15,13 @@ ABSBaseWeapon::ABSBaseWeapon()
 	PrimaryActorTick.bCanEverTick = false;
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
 	SetRootComponent(MeshComponent);
+
+	WeaponFXComponent = CreateDefaultSubobject<UBSWeaponFXComponent>("WeaponFXComponent");
 }
 
 void ABSBaseWeapon::StartFire()
 {
-	if(IsClipEmpty())
+	if (IsClipEmpty())
 	{
 		OnClipEmptySignature.Broadcast();
 		return;
@@ -46,24 +50,24 @@ void ABSBaseWeapon::MakeShot()
 
 	FHitResult HitResult;
 	MakeHit(HitResult, TraceStart, TraceEnd);
-	DecreaseAmmo();
 
+	FVector TraceFXEnd = TraceEnd;
 	if (!HitResult.bBlockingHit)
 	{
-		DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 2.0f);
+		TraceFXEnd = HitResult.ImpactPoint;
 		return;
 	}
-
 	if (AActor* Enemy = Cast<AActor>(HitResult.GetActor()))
 	{
 		UGameplayStatics::ApplyPointDamage(Enemy, Damage, TraceStart, HitResult, GetPlayerController(), GetOwner(), nullptr);
 	}
-	DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 2.0f);
-	DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10, 24, FColor::Red, false, 3.0f);
+	DecreaseAmmo();
+	SpawnTraceFX(GetMuzzleWorldLocation(),TraceFXEnd);
+	WeaponFXComponent->PlayImpactFX(HitResult);
 }
 bool ABSBaseWeapon::CanReload()
 {
-	if(IsAmmoFull() || !CurrentAmmo.BulletAmount || IsClipEmpty())
+	if (IsAmmoFull() || IsAmmoEmpty())
 	{
 		return false;
 	}
@@ -83,7 +87,7 @@ FAmmoData ABSBaseWeapon::GetAmmoData() const
 }
 bool ABSBaseWeapon::TryAddAmmo(int32 AmountOfAmmo)
 {
-	if(CurrentAmmo.Infinite || IsAmmoFull())
+	if (CurrentAmmo.Infinite || IsAmmoFull())
 	{
 		return false;
 	}
@@ -97,6 +101,8 @@ void ABSBaseWeapon::BeginPlay()
 	Super::BeginPlay();
 
 	check(MeshComponent);
+	check(WeaponFXComponent);
+
 	checkf(DefaultAmmo.BulletAmount >= 0, TEXT("Bullets count coudn`t be less of zero"));
 	checkf(DefaultAmmo.BulletsInClip >= 0, TEXT("Bullets in Clip count coudn`t be less of zero"));
 	CurrentAmmo = DefaultAmmo;
@@ -152,6 +158,7 @@ void ABSBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, co
 	}
 	FCollisionQueryParams CollisionParam;
 	CollisionParam.AddIgnoredActor(GetOwner());
+	CollisionParam.bReturnPhysicalMaterial = true;
 
 	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, CollisionParam);
 }
@@ -159,7 +166,7 @@ void ABSBaseWeapon::DecreaseAmmo()
 {
 	CurrentAmmo.BulletsInClip--;
 	LogAmmo();
-	
+
 	if (IsClipEmpty())
 	{
 		OnClipEmptySignature.Broadcast();
@@ -167,7 +174,7 @@ void ABSBaseWeapon::DecreaseAmmo()
 }
 void ABSBaseWeapon::ChangeClip()
 {
-	if(!CanReload())
+	if (!CanReload())
 	{
 		return;
 	}
@@ -201,4 +208,22 @@ bool ABSBaseWeapon::IsClipEmpty() const
 bool ABSBaseWeapon::IsAmmoFull() const
 {
 	return CurrentAmmo.BulletsInClip == DefaultAmmo.BulletsInClip && CurrentAmmo.BulletAmount == DefaultAmmo.BulletAmount;
+}
+UNiagaraComponent* ABSBaseWeapon::SpawnMuzzleFX()
+{
+	return UNiagaraFunctionLibrary::SpawnSystemAttached(
+		MuzzleFX,
+		MeshComponent,
+		MuzzleSocketName,
+		FVector::ZeroVector,
+		FRotator::ZeroRotator,
+		EAttachLocation::SnapToTarget,
+		true);
+}
+void ABSBaseWeapon::SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd)
+{
+	if(const auto TraceFXComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),TraceFX,TraceStart))
+	{
+		TraceFXComponent->SetNiagaraVariableVec3(TraceTargetName,TraceEnd);
+	}
 }

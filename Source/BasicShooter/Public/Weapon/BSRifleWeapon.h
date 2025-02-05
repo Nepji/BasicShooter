@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Weapon/BSBaseWeapon.h"
+#include "NiagaraComponent.h"
 #include "BSRifleWeapon.generated.h"
+
+
+class UNiagaraComponent;
 
 UCLASS()
 class BASICSHOOTER_API ABSRifleWeapon : public ABSBaseWeapon
@@ -17,7 +21,15 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0))
 	float FireRate = 0.1f;
+
+
 	
 private:
 	FTimerHandle ShotTimerHandle;
+
+	UPROPERTY()
+	UNiagaraComponent* MuzzleFXComponent;
+private:
+	void InitMuzzleFX();
+	void SetMuzzleFXVisible(bool Visibility);
 };

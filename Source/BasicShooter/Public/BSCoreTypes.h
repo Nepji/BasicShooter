@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "NiagaraSystem.h"
 #include "BSCoreTypes.generated.h"
 
 class ABSBaseWeapon;
@@ -11,7 +12,7 @@ DECLARE_MULTICAST_DELEGATE(FOnClipEmptySignature)
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnNotifiedSignature, USkeletalMeshComponent*)
 //Health
 DECLARE_MULTICAST_DELEGATE(FOnDeath)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChange,float)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChange,float,float)
 //Pickup
 DECLARE_MULTICAST_DELEGATE(FOnPickupTakenSignature)
 	//
@@ -77,4 +78,35 @@ struct FHealthData
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0.0f))
 	float HealingValue = 1.0f;
+};
+// VFX
+USTRUCT(Blueprintable)
+struct FDecalData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	UMaterialInterface* Material;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	FVector Size = FVector(10.0f);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	float LifeTime = 5.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	float FadeOutTime = 0.7f;
+};
+USTRUCT(Blueprintable)
+struct FImpactData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	UNiagaraSystem* NiagaraEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	FDecalData DecalData;
+
+	
 };

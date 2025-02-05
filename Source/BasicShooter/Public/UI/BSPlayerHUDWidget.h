@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BSCoreTypes.h"
 #include "Blueprint/UserWidget.h"
 #include "BSPlayerHUDWidget.generated.h"
 
@@ -16,6 +17,7 @@ class BASICSHOOTER_API UBSPlayerHUDWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	float GetHealthPercent();
 
@@ -33,6 +35,15 @@ class BASICSHOOTER_API UBSPlayerHUDWidget : public UUserWidget
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	bool IsPlayerSpectating() const;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
+	void OnTakeDamage();
+
+	virtual bool Initialize() override;
+
+private:
+
+	void OnHealthChange(float Health, float HealthDelta);
 	
 };
 

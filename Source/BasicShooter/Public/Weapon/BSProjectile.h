@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/BSWeaponFXComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -41,6 +42,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	bool CentreFullDamage = true;
+
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	UBSWeaponFXComponent* WeaponFXComponent;
 protected:
 	UFUNCTION()
 	void OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

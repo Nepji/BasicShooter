@@ -9,6 +9,7 @@
 
 
 
+class UCameraShakeBase;
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -41,11 +42,14 @@ public:
 
 protected:
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0.0f))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0.0f),Category = "Health")
 	float MaxHealth = 100.0f;
 	
-	UPROPERTY(EditDefaultsOnly,Blueprintable)
+	UPROPERTY(EditDefaultsOnly,Blueprintable,Category = "Health")
 	FHealthData HealthData;
+
+	UPROPERTY(EditDefaultsOnly,Blueprintable, Category = "VFX")
+	TSubclassOf<UCameraShakeBase> CameraShake;
 
 protected:
 	virtual void BeginPlay() override;
@@ -59,5 +63,6 @@ private:
 	void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	void HealUpdate();
 	bool HealthIsFull() const;
+	void PlayCameraShake();
 	
 };

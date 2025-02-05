@@ -51,9 +51,25 @@ bool UBSPlayerHUDWidget::IsPlayerAlive() const
 }
 bool UBSPlayerHUDWidget::IsPlayerSpectating() const
 {
-	if(const auto Controller = GetOwningPlayer())
+	if (const auto Controller = GetOwningPlayer())
 	{
 		return Controller->GetStateName() == NAME_Spectating;
 	}
 	return false;
+}
+bool UBSPlayerHUDWidget::Initialize()
+{
+	if (const auto HealthComponent = BSCoreUtils::GetComponent<UBSHealthComponent>(GetOwningPlayerPawn()))
+	{
+		HealthComponent->OnHealthChange.AddUObject(this, &UBSPlayerHUDWidget::OnHealthChange);
+	}
+	return Super::Initialize();
+}
+void UBSPlayerHUDWidget::OnHealthChange(float Health, float HealthDelta)
+{
+	if(HealthDelta > 0.0f)
+	{
+		OnTakeDamage();
+	}
+	
 }

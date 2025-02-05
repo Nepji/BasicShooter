@@ -53,6 +53,7 @@ void ABSBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	check(GetMesh());
 	check(HealthComponent);
 	check(HealthTextRenderComponent);
 	check(WeaponComponent);
@@ -66,7 +67,7 @@ void ABSBaseCharacter::BeginPlay()
 		}
 	}
 
-	OnHealthChange(HealthComponent->GetHealth());
+	OnHealthChange(HealthComponent->GetHealth(), 0);
 	HealthComponent->OnDeath.AddUObject(this, &ABSBaseCharacter::OnDeath);
 	HealthComponent->OnHealthChange.AddUObject(this, &ABSBaseCharacter::OnHealthChange);
 }
@@ -131,7 +132,6 @@ void ABSBaseCharacter::OnEndRun(const FInputActionValue& Value)
 
 void ABSBaseCharacter::OnDeath()
 {
-	PlayAnimMontage(DeathAnimMontage);
 	GetCharacterMovement()->DisableMovement();
 	SetLifeSpan(ToDeathTimer);
 
@@ -142,8 +142,11 @@ void ABSBaseCharacter::OnDeath()
 		Controller->ChangeState(NAME_Spectating);
 	}
 	WeaponComponent->StopFire();
+
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetSimulatePhysics(true); 
 }
-void ABSBaseCharacter::OnHealthChange(float Health)
+void ABSBaseCharacter::OnHealthChange(float Health, float HealthDelta)
 {
 	HealthTextRenderComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }

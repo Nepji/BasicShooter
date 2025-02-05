@@ -2,3 +2,8 @@
 
 
 #include "Weapon/BSPistolWeapon.h"
+void ABSPistolWeapon::MakeShot()
+{
+	Super::MakeShot();
+	SpawnMuzzleFX();
+}

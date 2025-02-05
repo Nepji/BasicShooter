@@ -29,6 +29,7 @@ void ABSLauncherWeapon::MakeShot()
 		Projectile->SetOwner(GetOwner());
 		Projectile->FinishSpawning(SpawnTransform);
 	}
-
+	SpawnTraceFX(GetMuzzleWorldLocation(),EndPoint);
 	DecreaseAmmo();
+	SpawnMuzzleFX();
 }

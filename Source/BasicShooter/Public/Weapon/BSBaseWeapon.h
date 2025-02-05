@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BSCoreTypes.h"
+#include "Components/BSWeaponFXComponent.h"
 #include "GameFramework/Actor.h"
 #include "BSBaseWeapon.generated.h"
 
@@ -21,7 +22,7 @@ public:
 
 public:
 	ABSBaseWeapon();
-
+	
 	virtual void StartFire();
 	virtual void StopFire();
 	virtual void MakeShot();
@@ -53,6 +54,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Blueprintable, Category = "Weapon")
 	FWeaponUIData UIData;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	UBSWeaponFXComponent* WeaponFXComponent;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	UNiagaraSystem* MuzzleFX;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	UNiagaraSystem* TraceFX;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	FString TraceTargetName = "TraceTarget";
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -69,8 +82,11 @@ protected:
 	bool IsAmmoEmpty() const;
 	bool IsClipEmpty() const;
 	bool IsAmmoFull() const;
+	void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd);
+	UNiagaraComponent* SpawnMuzzleFX();
 	
 
 private:
 	FAmmoData CurrentAmmo;
+	
 };

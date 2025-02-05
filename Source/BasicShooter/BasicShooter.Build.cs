@@ -7,12 +7,22 @@ public class BasicShooter : ModuleRules
 	public BasicShooter(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "Blutility"});
+
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core",
+			"CoreUObject",
+			"Engine",
+			"InputCore",
+			"EnhancedInput",
+			"Blutility",
+			"Niagara",
+			"PhysicsCore"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput" });
 
-		PublicIncludePaths.AddRange(new string[] {"BasicShooter/Public/Player"});
+		PublicIncludePaths.AddRange(new string[] { "BasicShooter/Public/Player" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
