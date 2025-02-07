@@ -186,11 +186,45 @@ bool UBSWeaponComponent::CanFire() const
 {
 	const auto Character = Cast<ABSBaseCharacter>(GetOwner());
 	const auto MovementComponent = Character->GetMovementComponent();
+	if(!MovementComponent)
+	{
+		return false;
+	}
 	return !EquipAnimationInProgress && CurrentWeapon && !Character->IsRunning() && !MovementComponent->IsFalling() && !ReloadAnimationInProgress;
 }
 bool UBSWeaponComponent::CanReload() const
 {
-	return !ReloadAnimationInProgress && !CurrentWeapon->CanReload();
+	return !ReloadAnimationInProgress && CurrentWeapon->CanReload();
+}
+bool UBSWeaponComponent::IsWeaponsNeedToReload() const
+{
+	for (const auto Weapon : Weapons)
+	{
+		if(IsCurrentWeaponEmpty(Weapon))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+bool UBSWeaponComponent::IsCurrentWeaponEmpty(const ABSBaseWeapon* Weapon) const
+{
+	if (!Weapon)
+	{
+		return false;
+	}
+	return Weapon->IsClipEmpty() && Weapon->CanReload();
+}
+float UBSWeaponComponent::GetCurrentAmmoLoadPercent() const
+{
+	if(!CurrentWeapon)
+	{
+		return 0.0f;
+	}
+	const auto CurrentAmmo = CurrentWeapon->GetAmmoData().BulletAmount;
+	const auto DefaultAmmo = CurrentWeapon->GetDefaultAmmoData().BulletAmount;
+	return CurrentAmmo/DefaultAmmo;
+	
 }
 
 void UBSWeaponComponent::OnEmptyClip()
@@ -222,7 +256,7 @@ bool UBSWeaponComponent::GetWeaponAmmoData(FAmmoData& AmmoData) const
 }
 void UBSWeaponComponent::ChangeClip()
 {
-	if (CanReload())
+	if (!CanReload())
 	{
 		return;
 	}

@@ -12,7 +12,7 @@
 
 
 
-UCLASS()
+UCLASS(Abstract)
 class BASICSHOOTER_API ABSBaseWeapon : public AActor
 {
 	GENERATED_BODY()
@@ -26,12 +26,17 @@ public:
 	virtual void StartFire();
 	virtual void StopFire();
 	virtual void MakeShot();
-	virtual bool CanReload();
+
+	virtual bool CanReload() const;
 	virtual void Reload();
 	FWeaponUIData GetUIData() const;
+	FAmmoData GetDefaultAmmoData() const;
 	FAmmoData GetAmmoData() const;
 	bool TryAddAmmo(int32 AmountOfAmmo);
-
+	bool IsAmmoEmpty() const;
+	bool IsClipEmpty() const;
+	bool IsAmmoFull() const;
+	bool IsClipFull() const;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* MeshComponent;
@@ -70,20 +75,15 @@ protected:
 	virtual void BeginPlay() override;
 
 	APlayerController* GetPlayerController() const;
-	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation);
+	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const;
 	FVector GetMuzzleWorldLocation() const;
-	bool GetTraceData(FVector& TraceStart, FVector& TraceEnd);
-	
+	bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
 	void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
-
-	void DecreaseAmmo();
+	virtual void DecreaseAmmo();
 	void ChangeClip();
-	void LogAmmo();
-	bool IsAmmoEmpty() const;
-	bool IsClipEmpty() const;
-	bool IsAmmoFull() const;
-	void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd);
-	UNiagaraComponent* SpawnMuzzleFX();
+	void LogAmmo() const;
+	void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd) const;
+	UNiagaraComponent* SpawnMuzzleFX() const;
 	
 
 private:

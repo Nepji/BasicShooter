@@ -8,7 +8,7 @@
 
 bool ABSHealthPickup::PickUpTo(APawn* PlayerPawn)
 {
-	const auto HealthComponent = BSCoreUtils::GetComponent<UBSHealthComponent>(PlayerPawn);
+	const auto HealthComponent = BSCoreUtils::GetActorComponent<UBSHealthComponent>(PlayerPawn);
 	if(!HealthComponent || HealthComponent->IsDead())
 	{
 		return false;

@@ -3,13 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BSProjectile.h"
+
 #include "Weapon/BSBaseWeapon.h"
 #include "BSLauncherWeapon.generated.h"
 
-/**
- *
- */
 UCLASS()
 class BASICSHOOTER_API ABSLauncherWeapon : public ABSBaseWeapon
 {

@@ -10,7 +10,7 @@
 
 float UBSPlayerHUDWidget::GetHealthPercent()
 {
-	if (const auto HealthComponent = BSCoreUtils::GetComponent<UBSHealthComponent>(GetOwningPlayerPawn()))
+	if (const auto HealthComponent = BSCoreUtils::GetActorComponent<UBSHealthComponent>(GetOwningPlayerPawn()))
 	{
 		return HealthComponent->GetHealthPercent();
 	}
@@ -27,7 +27,7 @@ FString UBSPlayerHUDWidget::GetAmmoDataText()
 }
 bool UBSPlayerHUDWidget::GetWeaponUIData(FWeaponUIData& UIData)
 {
-	if (const auto WeaponComponent = BSCoreUtils::GetComponent<UBSWeaponComponent>(GetOwningPlayerPawn()))
+	if (const auto WeaponComponent = BSCoreUtils::GetActorComponent<UBSWeaponComponent>(GetOwningPlayerPawn()))
 	{
 		return WeaponComponent->GetWeaponUIData(UIData);
 	}
@@ -35,7 +35,7 @@ bool UBSPlayerHUDWidget::GetWeaponUIData(FWeaponUIData& UIData)
 }
 bool UBSPlayerHUDWidget::GetWeaponAmmoData(FAmmoData& AmmoData)
 {
-	if (const auto WeaponComponent = BSCoreUtils::GetComponent<UBSWeaponComponent>(GetOwningPlayerPawn()))
+	if (const auto WeaponComponent = BSCoreUtils::GetActorComponent<UBSWeaponComponent>(GetOwningPlayerPawn()))
 	{
 		return WeaponComponent->GetWeaponAmmoData(AmmoData);
 	}
@@ -43,7 +43,7 @@ bool UBSPlayerHUDWidget::GetWeaponAmmoData(FAmmoData& AmmoData)
 }
 bool UBSPlayerHUDWidget::IsPlayerAlive() const
 {
-	if (const auto HealthComponent = BSCoreUtils::GetComponent<UBSHealthComponent>(GetOwningPlayerPawn()))
+	if (const auto HealthComponent = BSCoreUtils::GetActorComponent<UBSHealthComponent>(GetOwningPlayerPawn()))
 	{
 		return !HealthComponent->IsDead();
 	}
@@ -59,7 +59,7 @@ bool UBSPlayerHUDWidget::IsPlayerSpectating() const
 }
 bool UBSPlayerHUDWidget::Initialize()
 {
-	if (const auto HealthComponent = BSCoreUtils::GetComponent<UBSHealthComponent>(GetOwningPlayerPawn()))
+	if (const auto HealthComponent = BSCoreUtils::GetActorComponent<UBSHealthComponent>(GetOwningPlayerPawn()))
 	{
 		HealthComponent->OnHealthChange.AddUObject(this, &UBSPlayerHUDWidget::OnHealthChange);
 	}

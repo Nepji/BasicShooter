@@ -16,11 +16,14 @@ class BASICSHOOTER_API UBSWeaponComponent : public UActorComponent
 public:
 	UBSWeaponComponent();
 
-	void StartFire();
-	void StopFire();
-	void NextWeapon();
+	virtual void StartFire();
+	virtual void StopFire();
+	virtual void NextWeapon();
 	bool CanFire() const;
 	bool CanReload() const;
+	bool IsWeaponsNeedToReload() const;
+	bool IsCurrentWeaponEmpty(const ABSBaseWeapon* Weapon) const;
+	float GetCurrentAmmoLoadPercent() const;
 	void Reload();
 	bool GetWeaponUIData(FWeaponUIData& UIData) const;
 	bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
@@ -49,35 +52,36 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Blueprintable, Category = "Animation")
 	UAnimMontage* EquipAnimMontage;
 
-protected:
-	virtual void BeginPlay() override;
-	
-
-private:
 	UPROPERTY()
 	ABSBaseWeapon* CurrentWeapon;
 
 	UPROPERTY()
 	TArray<ABSBaseWeapon*> Weapons;
 
+protected:
+	int32 CurrentWeaponIndex = 0;
+
+protected:
+	virtual void BeginPlay() override;
+	void EquipWeapon(int32 WeaponIndex);
+
+private:
 	UPROPERTY()
 	UAnimMontage* CurrentReloadAnimation = nullptr;
-
+private:
 	bool EquipAnimationInProgress = false;
 	bool ReloadAnimationInProgress = false;
-	int32 CurrentWeaponIndex = 0;
+
 
 private:
 	void AttachWeaponToSocket(ABSBaseWeapon* Weapon, USkeletalMeshComponent* SceneComponent, FName SocketName);
-	void EquipWeapon(int32 WeaponIndex);
 	void SpawnWeapon();
 	FName CurrentWeaponSocket(TSubclassOf<ABSBaseWeapon> WeaponClass) const;
 	void PlayAnimMontage(UAnimMontage* AnimMontage);
 	void InitAnimations();
 	void OnEquipFinished(USkeletalMeshComponent* MeshComp);
 	void OnReloadFinished(USkeletalMeshComponent* MeshComp);
-
-
+	
 	void ChangeClip();
 	void OnEmptyClip();
 };

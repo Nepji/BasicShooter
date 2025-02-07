@@ -15,12 +15,14 @@ public class BasicShooter : ModuleRules
 			"Engine",
 			"InputCore",
 			"EnhancedInput",
-			"Blutility",
 			"Niagara",
-			"PhysicsCore"
+			"PhysicsCore", 
+			"AIModule",
+			"GameplayTasks",
+			"NavigationSystem", 
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput", "Blutility" });
 
 		PublicIncludePaths.AddRange(new string[] { "BasicShooter/Public/Player" });
 

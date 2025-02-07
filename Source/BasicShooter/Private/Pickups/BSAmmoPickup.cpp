@@ -9,12 +9,12 @@
 
 bool ABSAmmoPickup::PickUpTo(APawn* PlayerPawn)
 {
-	const auto HealthComponent = BSCoreUtils::GetComponent<UBSHealthComponent>(PlayerPawn);
+	const auto HealthComponent = BSCoreUtils::GetActorComponent<UBSHealthComponent>(PlayerPawn);
 	if(!HealthComponent || HealthComponent->IsDead())
 	{
 		return false;
 	}
-	const auto WeaponComponent = BSCoreUtils::GetComponent<UBSWeaponComponent>(PlayerPawn);
+	const auto WeaponComponent = BSCoreUtils::GetActorComponent<UBSWeaponComponent>(PlayerPawn);
 	if(!WeaponComponent)
 	{
 		return false;

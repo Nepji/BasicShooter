@@ -6,5 +6,5 @@
 void UBSAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
 	OnNotifiedSignature.Broadcast(MeshComp);
-	Super ::Notify(MeshComp, Animation);
+	Super::Notify(MeshComp, Animation);
 }

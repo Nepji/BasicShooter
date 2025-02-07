@@ -2,19 +2,19 @@
 
 
 #include "Utilities/AssetUtility.h"
-
+#ifdef WITH_EDITOR
 #include "EditorUtilityLibrary.h"
 #include "Subsystems/EditorAssetSubsystem.h"
+#endif
 
 FString UAssetUtility::NewPrefix(UObject *Obj) {
-  FString BadResult = "Unknown_";
   if (!Obj)
   {
-    return BadResult;
+    return UnknownClassPrefix;
   }
 
   const FString* Prefix = AssetClassToPrefixMap.Find(Obj->GetClass()->GetName());
-  return Prefix ? *Prefix : *BadResult;
+  return Prefix ? *Prefix : *UnknownClassPrefix;
 }
 
 

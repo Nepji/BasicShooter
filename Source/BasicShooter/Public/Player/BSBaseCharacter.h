@@ -87,6 +87,8 @@ protected:
 
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void OnDeath();
 	
 
 
@@ -103,7 +105,7 @@ private:
 	void EnhancedInputLook(const FInputActionValue& Value);
 	void OnStartRun(const FInputActionValue& Value);
 	void OnEndRun(const FInputActionValue& Value);
-	void OnDeath();
+
 	void OnHealthChange(float Health, float HealthDelta);
 
 };

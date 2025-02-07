@@ -3,6 +3,7 @@
 #include "Weapon/BSLauncherWeapon.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Weapon/BSProjectile.h"
 
 void ABSLauncherWeapon::MakeShot()
 {

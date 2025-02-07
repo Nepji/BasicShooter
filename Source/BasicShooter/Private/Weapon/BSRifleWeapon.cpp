@@ -3,6 +3,7 @@
 
 #include "Weapon/BSRifleWeapon.h"
 
+#include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void ABSRifleWeapon::StartFire()
@@ -15,6 +16,14 @@ void ABSRifleWeapon::StopFire()
 {
 	SetMuzzleFXVisible(false);
 	GetWorldTimerManager().ClearTimer(ShotTimerHandle);
+}
+void ABSRifleWeapon::DecreaseAmmo()
+{
+	Super::DecreaseAmmo();
+	if (IsClipEmpty())
+	{
+		OnClipEmptySignature.Broadcast();
+	}
 }
 void ABSRifleWeapon::InitMuzzleFX()
 {

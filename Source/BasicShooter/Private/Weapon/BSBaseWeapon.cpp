@@ -1,10 +1,8 @@
 
 #include "Weapon/BSBaseWeapon.h"
 
-#include "BSBaseCharacter.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
-#include "Engine/DamageEvents.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -52,22 +50,21 @@ void ABSBaseWeapon::MakeShot()
 	MakeHit(HitResult, TraceStart, TraceEnd);
 
 	FVector TraceFXEnd = TraceEnd;
-	if (!HitResult.bBlockingHit)
+	if (HitResult.bBlockingHit)
 	{
 		TraceFXEnd = HitResult.ImpactPoint;
-		return;
 	}
 	if (AActor* Enemy = Cast<AActor>(HitResult.GetActor()))
 	{
 		UGameplayStatics::ApplyPointDamage(Enemy, Damage, TraceStart, HitResult, GetPlayerController(), GetOwner(), nullptr);
 	}
 	DecreaseAmmo();
-	SpawnTraceFX(GetMuzzleWorldLocation(),TraceFXEnd);
+	SpawnTraceFX(GetMuzzleWorldLocation(), TraceFXEnd);
 	WeaponFXComponent->PlayImpactFX(HitResult);
 }
-bool ABSBaseWeapon::CanReload()
+bool ABSBaseWeapon::CanReload() const
 {
-	if (IsAmmoFull() || IsAmmoEmpty())
+	if (IsAmmoEmpty() || IsClipFull())
 	{
 		return false;
 	}
@@ -80,6 +77,10 @@ void ABSBaseWeapon::Reload()
 FWeaponUIData ABSBaseWeapon::GetUIData() const
 {
 	return UIData;
+}
+FAmmoData ABSBaseWeapon::GetDefaultAmmoData() const
+{
+	return DefaultAmmo;
 }
 FAmmoData ABSBaseWeapon::GetAmmoData() const
 {
@@ -117,14 +118,29 @@ APlayerController* ABSBaseWeapon::GetPlayerController() const
 	return nullptr;
 }
 
-bool ABSBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation)
+bool ABSBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const
 {
-	if (const APlayerController* Controller = GetPlayerController())
+	const auto BSCharacter = Cast<ACharacter>(GetOwner());
+	if (!BSCharacter)
 	{
-		Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
-		return true;
+		return false;
 	}
-	return false;
+	if (BSCharacter->IsPlayerControlled())
+	{
+		const APlayerController* Controller = GetPlayerController();
+		if (!Controller)
+		{
+			return false;
+		}
+		Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+	}
+	else
+	{
+		ViewLocation = GetMuzzleWorldLocation();
+		ViewRotation = MeshComponent->GetSocketRotation(MuzzleSocketName);
+	}
+
+	return true;
 }
 
 FVector ABSBaseWeapon::GetMuzzleWorldLocation() const
@@ -132,7 +148,7 @@ FVector ABSBaseWeapon::GetMuzzleWorldLocation() const
 	return MeshComponent->GetSocketLocation(MuzzleSocketName);
 }
 
-bool ABSBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd)
+bool ABSBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
 {
 	FVector ViewLocation;
 	FRotator ViewRotation;
@@ -166,11 +182,6 @@ void ABSBaseWeapon::DecreaseAmmo()
 {
 	CurrentAmmo.BulletsInClip--;
 	LogAmmo();
-
-	if (IsClipEmpty())
-	{
-		OnClipEmptySignature.Broadcast();
-	}
 }
 void ABSBaseWeapon::ChangeClip()
 {
@@ -190,11 +201,13 @@ void ABSBaseWeapon::ChangeClip()
 	{
 		CurrentAmmo.BulletAmount -= BulletsToReload;
 	}
+	LogAmmo();
 }
-void ABSBaseWeapon::LogAmmo()
+void ABSBaseWeapon::LogAmmo() const
 {
-	FString AmmoInfo = "Ammo " + FString::FromInt(CurrentAmmo.BulletsInClip) + " / ";
-	AmmoInfo += DefaultAmmo.Infinite ? "Infinite" : FString::FromInt(CurrentAmmo.BulletAmount);
+	FString AmmoInfo = "Ammo " + FString::FromInt(CurrentAmmo.BulletsInClip);
+	AmmoInfo += " / " + DefaultAmmo.Infinite ? "Infinite" : FString::FromInt(CurrentAmmo.BulletAmount);
+	AmmoInfo += " / Host: " + GetOwner()->GetName();
 	UE_LOG(LogBaseWeapon, Display, TEXT("%s"), *AmmoInfo);
 }
 bool ABSBaseWeapon::IsAmmoEmpty() const
@@ -207,9 +220,13 @@ bool ABSBaseWeapon::IsClipEmpty() const
 }
 bool ABSBaseWeapon::IsAmmoFull() const
 {
-	return CurrentAmmo.BulletsInClip == DefaultAmmo.BulletsInClip && CurrentAmmo.BulletAmount == DefaultAmmo.BulletAmount;
+	return CurrentAmmo.BulletAmount == DefaultAmmo.BulletAmount;
 }
-UNiagaraComponent* ABSBaseWeapon::SpawnMuzzleFX()
+bool ABSBaseWeapon::IsClipFull() const
+{
+	return CurrentAmmo.BulletsInClip == DefaultAmmo.BulletsInClip;
+}
+UNiagaraComponent* ABSBaseWeapon::SpawnMuzzleFX() const
 {
 	return UNiagaraFunctionLibrary::SpawnSystemAttached(
 		MuzzleFX,
@@ -220,10 +237,10 @@ UNiagaraComponent* ABSBaseWeapon::SpawnMuzzleFX()
 		EAttachLocation::SnapToTarget,
 		true);
 }
-void ABSBaseWeapon::SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd)
+void ABSBaseWeapon::SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd) const
 {
-	if(const auto TraceFXComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),TraceFX,TraceStart))
+	if (const auto TraceFXComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TraceFX, TraceStart))
 	{
-		TraceFXComponent->SetNiagaraVariableVec3(TraceTargetName,TraceEnd);
+		TraceFXComponent->SetNiagaraVariableVec3(TraceTargetName, TraceEnd);
 	}
 }

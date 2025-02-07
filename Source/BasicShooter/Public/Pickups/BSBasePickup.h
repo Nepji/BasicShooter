@@ -14,27 +14,28 @@ class BASICSHOOTER_API ABSBasePickup : public AActor
 	GENERATED_BODY()
 
 public:
-	FOnPickupTakenSignature OnPickupTakenSignature; 
-public:	
+	FOnPickupTakenSignature OnPickupTakenSignature;
+
+public:
 	ABSBasePickup();
+	virtual void Tick(float DeltaTime) override;
+	bool CouldBeTaken() const;
 
 protected:
-	UPROPERTY(EditDefaultsOnly,Category = "Pickup")
+	UPROPERTY(EditDefaultsOnly, Category = "Pickup")
 	USphereComponent* CollisionComponent;
 
-	UPROPERTY(EditDefaultsOnly,Category = "Pickup")
+	UPROPERTY(EditDefaultsOnly, Category = "Pickup")
 	UStaticMeshComponent* MeshComponent;
-	
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 	virtual bool PickUpTo(APawn* PlayerPawn);
-public:	
-	virtual void Tick(float DeltaTime) override;
 
 private:
 	float RotationYaw = 0.0f;
+
 private:
 	void GenerateRotationYaw();
-
 };

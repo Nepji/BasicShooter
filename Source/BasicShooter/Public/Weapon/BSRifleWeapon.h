@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Weapon/BSBaseWeapon.h"
-#include "NiagaraComponent.h"
 #include "BSRifleWeapon.generated.h"
 
 
@@ -22,8 +21,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0))
 	float FireRate = 0.1f;
 
+protected:
+	virtual void DecreaseAmmo() override;
 
-	
 private:
 	FTimerHandle ShotTimerHandle;
 

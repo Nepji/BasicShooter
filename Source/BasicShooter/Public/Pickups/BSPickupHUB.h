@@ -18,13 +18,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly,Category = "Pickup")
+	UPROPERTY(EditAnywhere,Category = "Pickup")
 	TArray<TSubclassOf<ABSBasePickup>> Pickups;
 
-	UPROPERTY(EditDefaultsOnly,Category = "Pickup", meta = (ClampMin = 0))
+	UPROPERTY(EditAnywhere,Category = "Pickup", meta = (ClampMin = 0))
 	float RespawnRate = 3.0f;
 
-	UPROPERTY(EditDefaultsOnly,Category = "Pickup")
+	UPROPERTY(EditAnywhere,Category = "Pickup")
 	bool Random = false;
 public:	
 	virtual void Tick(float DeltaTime) override;

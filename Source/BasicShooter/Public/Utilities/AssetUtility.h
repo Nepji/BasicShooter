@@ -2,8 +2,11 @@
 
 #pragma once
 
-#include "AssetActionUtility.h"
+
 #include "CoreMinimal.h"
+#ifdef WITH_EDITOR 
+#include "Editor/Blutility/Classes/AssetActionUtility.h"
+#endif
 #include "AssetUtility.generated.h"
 
 UCLASS(BlueprintType,Blueprintable)
@@ -23,15 +26,10 @@ public:
 	TArray<UObject*> SelectedAssetsArray();
 
 protected:
-
-	FString NewNameWithPrefix(UObject* Obj);
-	FString NewPrefix(UObject* Obj);
-	bool ExistedPrefix(const FString& OldName);
-	bool ExistedCorrectPrefix(const FString& OldName,const FString& CorrectPrefix);
-	FString ChangedPrefix(FString Name, const FString &CorrectPrefix);
-
-protected:
-	UPROPERTY(Blueprintable)
+	UPROPERTY(VisibleDefaultsOnly,BlueprintReadOnly, Category = "Specifier Data")
+	FString UnknownClassPrefix = "Unknown_";
+	
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Specifier Data")
 	TMap<FString, FString> AssetClassToPrefixMap = {
 		{"Material", "M_"},
 		{"MaterialInstance", "MI_"},
@@ -80,5 +78,10 @@ protected:
 		{"HDRI", "HDR_"}
 	};
 
-	
+protected:
+	FString NewNameWithPrefix(UObject* Obj);
+	FString NewPrefix(UObject* Obj);
+	bool ExistedPrefix(const FString& OldName);
+	bool ExistedCorrectPrefix(const FString& OldName,const FString& CorrectPrefix);
+	FString ChangedPrefix(FString Name, const FString &CorrectPrefix);
 };

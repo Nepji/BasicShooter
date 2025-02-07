@@ -4,13 +4,13 @@ class BSCoreUtils
 {
 public:
 	template <typename T>
-	static T* GetComponent(APawn* Pawn)
+	static T* GetActorComponent(AActor* Actor)
 	{
-		if (!Pawn)
+		if (!Actor)
 		{
 			return nullptr;
 		}
-		const auto Component = Pawn->GetComponentByClass(T::StaticClass());
+		const auto Component = Actor->GetComponentByClass(T::StaticClass());
 		const auto SearchedComponent = Cast<T>(Component);
 		return SearchedComponent;
 	}

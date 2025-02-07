@@ -57,6 +57,11 @@ void ABSBasePickup::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	AddActorLocalRotation(FRotator(0.0f, RotationYaw, 0.0f));
 }
+bool ABSBasePickup::CouldBeTaken() const
+{
+	return IsValid(this);
+}
+
 void ABSBasePickup::GenerateRotationYaw()
 {
 	const auto Direction = FMath::RandBool() ? 1.0f : -1.0f;

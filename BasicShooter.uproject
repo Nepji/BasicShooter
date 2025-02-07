@@ -1,4 +1,4 @@
-{
+ {
 	"FileVersion": 3,
 	"EngineAssociation": "5.3",
 	"Category": "",
@@ -10,7 +10,8 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-				"UMG"
+				"UMG",
+				"AIModule"
 			]
 		}
 	],
