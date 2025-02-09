@@ -2,7 +2,9 @@
 
 
 #include "Utilities/AssetUtility.h"
+
 #ifdef WITH_EDITOR
+
 #include "EditorUtilityLibrary.h"
 #include "Subsystems/EditorAssetSubsystem.h"
 #endif
@@ -57,13 +59,21 @@ FString UAssetUtility::NewNameWithPrefix(UObject *Obj) {
 
 FString UAssetUtility::ChangedPrefix(FString Name, const FString& CorrectPrefix)
 {
-  for (auto AssetPrefix : AssetClassToPrefixMap){
-    if (Name.StartsWith(AssetPrefix.Value)){
-      Name.ReplaceInline(*AssetPrefix.Value, *CorrectPrefix);
-      break;
-    }
-  }
-  return Name;
+	for (auto AssetPrefix : AssetClassToPrefixMap)
+	{
+		if (Name.StartsWith(AssetPrefix.Value))
+		{
+			Name.ReplaceInline(*AssetPrefix.Value, *CorrectPrefix);
+			break;
+		}
+	}
+	return Name;
+}
+void UAssetUtility::RenameAsset(UObject* Asset, const FString& NewName)
+{
+#ifdef WITH_EDITOR
+	UEditorUtilityLibrary::RenameAsset(Asset, NewName);
+#endif
 }
 
 void UAssetUtility::SetPrefix() {
@@ -75,13 +85,15 @@ void UAssetUtility::SetPrefix() {
   	{
   		continue;
   	}
-    UEditorUtilityLibrary::RenameAsset(Asset, NewName);
+  	RenameAsset(Asset,NewName);
   }
 }
 
 TArray<UObject*> UAssetUtility::SelectedAssetsArray()
 {
+#ifdef WITH_EDITOR
   return UEditorUtilityLibrary::GetSelectedAssets();
+#endif
 }
 
 void UAssetUtility::RenameAt(const FString From,const FString To) {
@@ -89,8 +101,6 @@ void UAssetUtility::RenameAt(const FString From,const FString To) {
 
   for (UObject *Asset : AssetsArray) {
     const FString NewName = Asset->GetName().Replace(*From,*To);
-    UEditorUtilityLibrary::RenameAsset(Asset, NewName);
+  	RenameAsset(Asset,NewName);
   }
-  
 }
-

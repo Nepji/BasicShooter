@@ -30,15 +30,19 @@ AActor* UBSAIPerceptionComponent::GetClosestEnemy()
 	}
 	float BestDistance = MAX_FLT;
 	AActor* BestPawn = nullptr;
-	for(const auto PercieveActor : PercieveActors)
+	for(const auto PerceiveActor : PercieveActors)
 	{
-		const auto HealthComponent = PercieveActor->GetComponentByClass<UBSHealthComponent>();
-		if(HealthComponent && !HealthComponent->IsDead())
+		const auto HealthComponent = PerceiveActor->GetComponentByClass<UBSHealthComponent>();
+
+		const auto PerceivePawn = Cast<APawn>(PerceiveActor);
+		const auto AreEnemies = PerceivePawn && BSCoreUtils::AreEnemies(Controller, PerceivePawn->Controller);
+		
+		if(HealthComponent && !HealthComponent->IsDead() && AreEnemies)
 		{
-			const float CurrentDistance = (PercieveActor->GetActorLocation() - Pawn->GetActorLocation()).Size();
+			const float CurrentDistance = (PerceiveActor->GetActorLocation() - Pawn->GetActorLocation()).Size();
 			if(CurrentDistance < BestDistance)
 			{
-				BestPawn = PercieveActor;
+				BestPawn = PerceiveActor;
 				BestDistance = CurrentDistance;
 			}
 		}

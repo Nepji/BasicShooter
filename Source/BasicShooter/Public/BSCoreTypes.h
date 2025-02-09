@@ -1,5 +1,8 @@
 ﻿#pragma once
+
+#include "EnhancedInputSubsystemInterface.h"
 #include "NiagaraSystem.h"
+#include "Runtime/Engine/Classes/Engine/DataTable.h"
 #include "BSCoreTypes.generated.h"
 
 class ABSBaseWeapon;
@@ -15,11 +18,41 @@ DECLARE_MULTICAST_DELEGATE(FOnDeath)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChange,float,float)
 //Pickup
 DECLARE_MULTICAST_DELEGATE(FOnPickupTakenSignature)
-	//
-	// STRUCT
-	//
-	// Weapon
-	USTRUCT(Blueprintable)
+//
+// STRUCT
+//
+//Player
+USTRUCT(Blueprintable)
+struct FInputData
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputMappingContext* MappingContext;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputAction* MoveAction;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputAction* LookAround;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputAction* JumpAction;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputAction* RunAction;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputAction* FireAction;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputAction* NextWeaponAction;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UInputAction* ReloadAction;
+};
+// Weapon
+USTRUCT(Blueprintable)
 struct FAmmoData
 {
 	GENERATED_BODY()
@@ -107,6 +140,57 @@ struct FImpactData
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
 	FDecalData DecalData;
-
-	
 };
+// GameMode
+USTRUCT(Blueprintable)
+struct FTeamData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly,Blueprintable)
+	FString TeamName;
+	
+	UPROPERTY(EditDefaultsOnly,Blueprintable)
+	FLinearColor TeamColor;
+};
+USTRUCT(Blueprintable)
+struct FGameData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Game", meta = (ClampMin = 1, ClampMax = 100))
+	int32 PlayerNum = 2;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	bool BotsEnabled = false;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Game", meta = (ClampMin = 1, ClampMax = 99))
+	int32 RoundNum = 4;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Game", meta = (ClampMin = 1, ClampMax = 99999))
+	int32 RoundTime = 120; // In Seconds
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Game", meta = (ClampMin = 1, ClampMax = 99999))
+	int32 RespawnRate = 3.0f; // In Seconds
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Game")
+	FTeamData DefaultTeamData;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Game")
+	TArray<FTeamData> TeamsData;
+};
+// Data
+USTRUCT(BlueprintType)
+struct FTipsData : public FTableRowBase
+{
+	GENERATED_BODY();
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	FString TipTitle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	FString TipDescription;
+};
+
+ 

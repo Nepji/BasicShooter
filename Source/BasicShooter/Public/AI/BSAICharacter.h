@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BSBaseCharacter.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "Player/BSBaseCharacter.h"
 #include "BSAICharacter.generated.h"
 
 /**

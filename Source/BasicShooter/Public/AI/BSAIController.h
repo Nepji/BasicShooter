@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "Components/BSAIPerceptionComponent.h"
+#include "Components/BSRespawnComponent.h"
 #include "BSAIController.generated.h"
 
 /**
@@ -23,6 +24,9 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere,Blueprintable,Category = "Components")
 	UBSAIPerceptionComponent* AIPerceptionComponent;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	UBSRespawnComponent* RespawnComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	FName FocusOnKeyName = "EnemyActor";

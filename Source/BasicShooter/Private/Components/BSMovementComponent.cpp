@@ -2,7 +2,6 @@
 
 
 #include "Components/BSMovementComponent.h"
-#include "Player/BSBaseCharacter.h"
 
 #include "BSBaseCharacter.h"
 

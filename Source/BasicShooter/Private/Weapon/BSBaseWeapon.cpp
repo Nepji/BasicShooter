@@ -1,12 +1,11 @@
 
 #include "Weapon/BSBaseWeapon.h"
 
+#include "BSPlayerController.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
-
-DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All);
 
 ABSBaseWeapon::ABSBaseWeapon()
 {
@@ -56,7 +55,7 @@ void ABSBaseWeapon::MakeShot()
 	}
 	if (AActor* Enemy = Cast<AActor>(HitResult.GetActor()))
 	{
-		UGameplayStatics::ApplyPointDamage(Enemy, Damage, TraceStart, HitResult, GetPlayerController(), GetOwner(), nullptr);
+		UGameplayStatics::ApplyPointDamage(Enemy, Damage, TraceStart, HitResult, GetController(), this, nullptr);
 	}
 	DecreaseAmmo();
 	SpawnTraceFX(GetMuzzleWorldLocation(), TraceFXEnd);
@@ -103,17 +102,16 @@ void ABSBaseWeapon::BeginPlay()
 
 	check(MeshComponent);
 	check(WeaponFXComponent);
-
 	checkf(DefaultAmmo.BulletAmount >= 0, TEXT("Bullets count coudn`t be less of zero"));
 	checkf(DefaultAmmo.BulletsInClip >= 0, TEXT("Bullets in Clip count coudn`t be less of zero"));
 	CurrentAmmo = DefaultAmmo;
 }
 
-APlayerController* ABSBaseWeapon::GetPlayerController() const
+AController* ABSBaseWeapon::GetController() const
 {
-	if (const ACharacter* Player = Cast<ACharacter>(GetOwner()))
+	if (const APawn* Pawn = Cast<APawn>(GetOwner()))
 	{
-		return Player->GetController<APlayerController>();
+		return Pawn->GetController();
 	}
 	return nullptr;
 }
@@ -127,7 +125,7 @@ bool ABSBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRota
 	}
 	if (BSCharacter->IsPlayerControlled())
 	{
-		const APlayerController* Controller = GetPlayerController();
+		const auto Controller = Cast<ABSPlayerController>(GetController());
 		if (!Controller)
 		{
 			return false;
@@ -181,7 +179,6 @@ void ABSBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, co
 void ABSBaseWeapon::DecreaseAmmo()
 {
 	CurrentAmmo.BulletsInClip--;
-	LogAmmo();
 }
 void ABSBaseWeapon::ChangeClip()
 {
@@ -201,15 +198,8 @@ void ABSBaseWeapon::ChangeClip()
 	{
 		CurrentAmmo.BulletAmount -= BulletsToReload;
 	}
-	LogAmmo();
 }
-void ABSBaseWeapon::LogAmmo() const
-{
-	FString AmmoInfo = "Ammo " + FString::FromInt(CurrentAmmo.BulletsInClip);
-	AmmoInfo += " / " + DefaultAmmo.Infinite ? "Infinite" : FString::FromInt(CurrentAmmo.BulletAmount);
-	AmmoInfo += " / Host: " + GetOwner()->GetName();
-	UE_LOG(LogBaseWeapon, Display, TEXT("%s"), *AmmoInfo);
-}
+
 bool ABSBaseWeapon::IsAmmoEmpty() const
 {
 	return !CurrentAmmo.BulletAmount && IsClipEmpty() && !CurrentAmmo.Infinite;

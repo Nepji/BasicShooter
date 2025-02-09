@@ -9,7 +9,7 @@
 ABSAICharacter::ABSAICharacter(const FObjectInitializer& OnjInit)
 	: Super(OnjInit.SetDefaultSubobjectClass<UBSAIWeaponComponent>("WeaponComponent"))
 {
-	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	AutoPossessAI = EAutoPossessAI::Disabled;
 	AIControllerClass = ABSAIController::StaticClass();
 }
 void ABSAICharacter::OnDeath()

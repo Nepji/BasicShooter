@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "BSCoreTypes.h"
 #include "Components/ActorComponent.h"
+#include "Templates/Tuple.h"
 #include "BSHealthComponent.generated.h"
+
 
 
 
@@ -26,10 +28,10 @@ public:
 	UBSHealthComponent();
 
 	UFUNCTION(Blueprintable,BlueprintCallable, Category = "Health")
-	const float GetHealth();
+	float GetHealth();
 
 	UFUNCTION(Blueprintable,BlueprintCallable, Category = "Health")
-	const bool IsDead();
+	bool IsDead();
 
 	UFUNCTION(Blueprintable,BlueprintCallable, Category = "Health")
 	void setHealth(float Health);
@@ -58,11 +60,16 @@ protected:
 private:
 	float Health = 0.0f;
 	FTimerHandle HealTimerHandle;
+	UPROPERTY()
+	TMap<AActor*,float> DamageCausers; //Who and Amount
 private:
+	void AddDamageLog(AController* Damager, float Damage);
 	UFUNCTION(Blueprintable)
 	void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	void HealUpdate();
 	bool HealthIsFull() const;
 	void PlayCameraShake();
+	void Killed(AController* KillerController, const AActor* DamageCauser);
+	AController* HasKillAssistant(const AController* KillerController); 
 	
 };

@@ -22,7 +22,7 @@ public:
 	float GetHealthPercent();
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	FString GetAmmoDataText();
+	bool GetAmmoDataText(FText& AmmoDataText);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	bool GetWeaponUIData(FWeaponUIData& UIData);
@@ -39,10 +39,20 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
 	void OnTakeDamage();
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	bool GetPlayerStatistic(FText& PlayerStatisticText) const; 
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	bool GetMatchStatistic(FText& MatchStatistic) const;
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	bool GetRoundRemainingTime(FText& RoundRemainingTimeText) const;
+
+
 	virtual bool Initialize() override;
 
 private:
-
+	void OnNewPawn(APawn* Pawn);
 	void OnHealthChange(float Health, float HealthDelta);
 	
 };

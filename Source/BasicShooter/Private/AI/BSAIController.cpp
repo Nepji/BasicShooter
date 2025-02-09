@@ -10,6 +10,10 @@ ABSAIController:: ABSAIController()
 	PrimaryActorTick.bCanEverTick = true;
 	AIPerceptionComponent = CreateDefaultSubobject<UBSAIPerceptionComponent>("BSPerceptionComponent");
 	SetPerceptionComponent(*AIPerceptionComponent);
+	
+	RespawnComponent = CreateDefaultSubobject<UBSRespawnComponent>("RespawnComponents");
+
+	bWantsPlayerState = true;
 }
 void ABSAIController::OnPossess(APawn* InPawn)
 {

@@ -4,7 +4,9 @@
 
 
 #include "CoreMinimal.h"
-#ifdef WITH_EDITOR 
+
+
+#ifdef WITH_EDITOR
 #include "Editor/Blutility/Classes/AssetActionUtility.h"
 #endif
 #include "AssetUtility.generated.h"
@@ -31,6 +33,7 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Specifier Data")
 	TMap<FString, FString> AssetClassToPrefixMap = {
+		{"UnknownClassType", "Unknown_"},
 		{"Material", "M_"},
 		{"MaterialInstance", "MI_"},
 		{"MaterialInstanceConstant", "MI_"},
@@ -84,4 +87,9 @@ protected:
 	bool ExistedPrefix(const FString& OldName);
 	bool ExistedCorrectPrefix(const FString& OldName,const FString& CorrectPrefix);
 	FString ChangedPrefix(FString Name, const FString &CorrectPrefix);
+
+private:
+	// We need separate function in order to  isolate Editor functionality while shipping
+	static void RenameAsset(UObject* Asset, const FString& NewName);
 };
+

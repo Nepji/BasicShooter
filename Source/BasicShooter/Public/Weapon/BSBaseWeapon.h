@@ -74,14 +74,13 @@ protected:
 protected:
 	virtual void BeginPlay() override;
 
-	APlayerController* GetPlayerController() const;
+	AController* GetController() const;
 	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const;
 	FVector GetMuzzleWorldLocation() const;
 	bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
 	void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
 	virtual void DecreaseAmmo();
 	void ChangeClip();
-	void LogAmmo() const;
 	void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd) const;
 	UNiagaraComponent* SpawnMuzzleFX() const;
 	
