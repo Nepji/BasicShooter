@@ -79,6 +79,9 @@ struct FWeaponData
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	UAnimMontage* ReloadAnimation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	bool Replaceable = false;
 };
 USTRUCT(Blueprintable)
 struct FWeaponUIData

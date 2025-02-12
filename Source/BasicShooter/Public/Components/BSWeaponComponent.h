@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Pickups/BSWeaponPickup.h"
 #include "Weapon/BSBaseWeapon.h"
 #include "BSWeaponComponent.generated.h"
 
@@ -30,14 +31,19 @@ public:
 	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	bool TryToAddAmmo(int32 AmountOfAmmo, TSubclassOf<ABSBaseWeapon> WeaponType = nullptr);
+	bool TryToRemoveWeapon(FWeaponData& WeaponData);
+	bool TryPickupWeapon(const FWeaponData& WeaponData);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	TArray<FWeaponData> WeaponData;
+	TArray<FWeaponData> WeaponsData;
 
 	/**If need the specific class, that we`ll put in second Armory*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	TArray<TSubclassOf<ABSBaseWeapon>> WeaponsToSecondarySlot;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon", meta = (ClampMin = 0))
+	int32 MaxEquipWeapons = 2;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	FName WeaponAttachSocket = "WeaponSocket";
@@ -75,14 +81,18 @@ private:
 
 private:
 	void AttachWeaponToSocket(ABSBaseWeapon* Weapon, USkeletalMeshComponent* SceneComponent, FName SocketName);
+	bool SpawnOneWeapon(const FWeaponData& OneWeaponData);
 	void SpawnWeapon();
 	FName CurrentWeaponSocket(TSubclassOf<ABSBaseWeapon> WeaponClass) const;
 	void PlayAnimMontage(UAnimMontage* AnimMontage);
+	void InitOneAnimation(const FWeaponData& WeaponData);
 	void InitAnimations();
 	void OnEquipFinished(USkeletalMeshComponent* MeshComp);
 	void OnReloadFinished(USkeletalMeshComponent* MeshComp);
 	
 	void ChangeClip();
 	void OnEmptyClip();
+
+	bool ReplaceableWeapon(FWeaponData& ReplaceableWeaponData);
 };
 

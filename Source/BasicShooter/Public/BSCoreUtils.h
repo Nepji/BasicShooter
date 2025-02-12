@@ -28,15 +28,30 @@ public:
 		const auto PlayerState2 = Cast<ABSPlayerState>(Controller2->PlayerState);
 		return PlayerState1 && PlayerState2 && PlayerState1->GetTeamID() != PlayerState2->GetTeamID();
 	}
-
-	static FString StringBadResult()
-	{
-		return BadTextResult;
-	}
+	
 	static FText TextBadResult()
 	{
 		return UKismetTextLibrary::Conv_StringToText(BadTextResult);
 	}
+	
+	template<typename Structure, typename T>
+	static Structure* FindInArrayByProperty(TArray<Structure>& From, const Structure& What, T Structure::* Property)
+	{
+		return From.FindByPredicate([&](const Structure& Data) {
+			return Data.*Property == What.*Property;
+		});
+	}
+
+	template<typename Structure, typename T>
+	static Structure** FindInArrayByClass(TArray<Structure*> From, const T& Value)
+	{
+		return  From.FindByPredicate([&](const Structure* Data)
+					{
+						return Data->GetClass() == Value;
+					});
+	}
+
+	
 
 private:
 	inline const static FString BadTextResult = "BadText";
