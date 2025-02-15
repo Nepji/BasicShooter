@@ -10,6 +10,8 @@ class USpringArmComponent;
 class UCameraComponent;
 class USphereComponent;
 
+
+
 UCLASS()
 class BASICSHOOTER_API ABSPlayerCharacter : public ABSBaseCharacter
 {
@@ -28,6 +30,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	USpringArmComponent* SpringArmComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = "Input Data")
+	FInputData InputData;
 protected:
 	UFUNCTION()
 	void OnCameraCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

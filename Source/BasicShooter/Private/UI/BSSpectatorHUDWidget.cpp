@@ -40,15 +40,16 @@ bool UBSSpectatorHUDWidget::GetRandomTip(FText& TipText)
 }
 bool UBSSpectatorHUDWidget::Initialize()
 {
-	if (GetWorld())
+	const auto InitStatus = Super::Initialize();
+	if (InitStatus && GetWorld())
 	{
 		GetWorld()->GetTimerManager().SetTimer(NextTipTimerHandle, this, &UBSSpectatorHUDWidget::NextTip, TipTimeOnScreen, true);
 	}
-	return Super::Initialize();
+	return InitStatus;
 }
 void UBSSpectatorHUDWidget::NextTip()
 {
-	if(TipsDataRowHandle.IsNull() || TipsDataRowHandle.DataTable.IsNull())
+	if(TipsDataRowHandle.IsNull() || !TipsDataRowHandle.DataTable)
 	{
 		return;
 	}

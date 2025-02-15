@@ -39,9 +39,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly,Blueprintable, Category = "Animation")
 	UAnimMontage* DeathAnimMontage;	
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = "Input Data")
-	FInputData InputData;
-
 	UPROPERTY(EditDefaultsOnly,Blueprintable, Category = "Material")
 	FName MaterialColorName = "Color"; 
 

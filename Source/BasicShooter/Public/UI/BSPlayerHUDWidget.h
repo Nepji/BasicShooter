@@ -49,7 +49,7 @@ public:
 	bool GetRoundRemainingTime(FText& RoundRemainingTimeText) const;
 
 
-	virtual bool Initialize() override;
+	virtual void NativeOnInitialized() override;
 
 private:
 	void OnNewPawn(APawn* Pawn);

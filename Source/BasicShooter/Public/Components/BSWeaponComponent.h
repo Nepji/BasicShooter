@@ -4,9 +4,29 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Pickups/BSWeaponPickup.h"
 #include "Weapon/BSBaseWeapon.h"
 #include "BSWeaponComponent.generated.h"
+
+USTRUCT(Blueprintable)
+struct FWeaponData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	TSubclassOf<ABSBaseWeapon> WeaponClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	UAnimMontage* ReloadAnimation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	bool Replaceable = false;
+
+
+	bool operator==(const FWeaponData& Data) const
+	{
+		return Data.WeaponClass == this->WeaponClass;
+	}
+};
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))

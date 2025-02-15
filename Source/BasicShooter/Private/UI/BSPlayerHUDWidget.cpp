@@ -10,14 +10,14 @@
 #include "BSGameModeBase.h"
 #include "Kismet/KismetTextLibrary.h"
 
-bool UBSPlayerHUDWidget::Initialize()
+void UBSPlayerHUDWidget::NativeOnInitialized()
 {
 	if (GetOwningPlayer())
 	{
 		OnNewPawn(GetOwningPlayerPawn());
 		GetOwningPlayer()->GetOnNewPawnNotifier().AddUObject(this, &UBSPlayerHUDWidget::OnNewPawn);
 	}
-	return Super::Initialize();
+	Super::NativeOnInitialized();
 }
 void UBSPlayerHUDWidget::OnNewPawn(APawn* Pawn)
 {

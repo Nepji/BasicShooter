@@ -16,6 +16,9 @@ class BASICSHOOTER_API ABSGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 public:
+	FOnMatchStateChangedSignature OnMatchStateChanged;
+	
+public:
 	ABSGameModeBase();
 
 	void Killed(AController* KillerController, AController* VictimController, const AController* AssistantController = nullptr);
@@ -25,6 +28,8 @@ public:
 	int32 GetCurrentMatchRound() const;
 	int32 GetMatchRoundsCount() const;
 	void RespawnRequest(AController* Controller);
+
+	virtual bool ClearPause() override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Blueprintable, Category = "Game")
@@ -39,11 +44,14 @@ protected:
 protected:
 	virtual void StartPlay() override;
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+	virtual bool SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate = FCanUnpause()) override;
+
 
 private:
 	int32 CurrentRound = 1;
 	int32 RoundCountDown = 0;
 	FTimerHandle GameRoundTimerHandle;
+	EBSMatchState MatchState = EBSMatchState::WaitingToStart;
 private:
 	void StartRound();
 	void GameTimerUpdate();
@@ -60,4 +68,6 @@ private:
 	void StartRespawn(AController* Controller) const;
 
 	void LogInfo() const;
+
+	void SetMatchState(EBSMatchState State);
 };

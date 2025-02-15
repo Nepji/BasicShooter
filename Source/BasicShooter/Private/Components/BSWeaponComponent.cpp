@@ -362,12 +362,14 @@ bool UBSWeaponComponent::TryPickupWeapon(const FWeaponData& WeaponData)
 		{
 			return false;
 		}
+		WeaponsData.Remove(WeaponData);
 		if(!TryToRemoveWeapon(ReplaceableWeaponData))
 		{
 			return false;
 		}
 	}
 	const auto WeaponDataUnit = BSCoreUtils::FindInArrayByProperty<FWeaponData>(WeaponsData,WeaponData,&FWeaponData::WeaponClass);
+
 	if(!WeaponDataUnit)
 	{
 		WeaponsData.Add(WeaponData);

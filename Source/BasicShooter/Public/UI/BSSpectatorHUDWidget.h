@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BSCoreTypes.h"
 #include "Blueprint/UserWidget.h"
 #include "BSSpectatorHUDWidget.generated.h"
 

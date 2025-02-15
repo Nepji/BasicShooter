@@ -10,7 +10,7 @@
 #include "BSPlayerState.h"
 #include "EngineUtils.h"
 #include "Components/BSRespawnComponent.h"
-#include "Player/BSPlayerCharacter.h"
+#include "Game/BSPlayerCharacter.h"
 
 #include "UI/BSGameHUD.h"
 
@@ -60,7 +60,15 @@ int32 ABSGameModeBase::GetMatchRoundsCount() const
 void ABSGameModeBase::RespawnRequest(AController* Controller)
 {
 	ResetOnePlayer(Controller);
-	
+}
+bool ABSGameModeBase::ClearPause()
+{
+	const auto PauseStatus = Super::ClearPause();
+	if (PauseStatus)
+	{
+		SetMatchState(EBSMatchState::InProgress);
+	}
+	return PauseStatus;
 }
 void ABSGameModeBase::StartPlay()
 {
@@ -72,6 +80,7 @@ void ABSGameModeBase::StartPlay()
 	}
 	CreateTeamInfo();
 	CurrentRound = 1;
+	SetMatchState(EBSMatchState::InProgress);
 	StartRound();
 }
 UClass* ABSGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
@@ -81,6 +90,17 @@ UClass* ABSGameModeBase::GetDefaultPawnClassForController_Implementation(AContro
 		return AIPawnClass;
 	}
 	return Super::GetDefaultPawnClassForController_Implementation(InController);
+}
+bool ABSGameModeBase::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate)
+{
+	const auto PauseState =  Super::SetPause(PC, CanUnpauseDelegate);
+
+	if(PauseState)
+	{
+		SetMatchState(EBSMatchState::Pause);
+	}
+	
+	return PauseState;
 }
 void ABSGameModeBase::StartRound()
 {
@@ -137,6 +157,8 @@ void ABSGameModeBase::GameOver()
 		Pawn->TurnOff();
 		Pawn->DisableInput(nullptr);
 	}
+
+	SetMatchState(EBSMatchState::GameOver);
 }
 void ABSGameModeBase::ResetPlayers()
 {
@@ -181,6 +203,7 @@ void ABSGameModeBase::CreateTeamInfo() const
 
 		PlayerState->SetTeamID(TeamID);
 		PlayerState->SetTeamColor(DetermineColorByTeamID(TeamID));
+		PlayerState->SetPlayerName(Controller->IsPlayerController()? "Player" : "Bot");
 		SetPlayerColor(Controller);
 		if(!GameData.TeamsData.IsEmpty())
 		{
@@ -236,26 +259,33 @@ void ABSGameModeBase::StartRespawn(AController* Controller) const
 }
 void ABSGameModeBase::LogInfo() const
 {
-	if(!GetWorld())
+	if (!GetWorld())
 	{
 		return;
 	}
-	for(auto It = GetWorld()->GetControllerIterator();It; ++It)
+	for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
 	{
 		const auto Controller = It->Get();
-		if(!Controller)
+		if (!Controller)
 		{
 			return;
 		}
 
 		const auto PlayerState = Cast<ABSPlayerState>(Controller->PlayerState);
-		if(!PlayerState)
+		if (!PlayerState)
 		{
 			return;
 		}
 
 		PlayerState->LogInfo();
 	}
-	
-		
+}
+void ABSGameModeBase::SetMatchState(EBSMatchState State)
+{
+	if(State == MatchState)
+	{
+		return;
+	}
+	MatchState = State;
+	OnMatchStateChanged.Broadcast(MatchState);
 }

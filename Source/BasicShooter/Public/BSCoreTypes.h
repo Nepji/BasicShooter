@@ -5,7 +5,6 @@
 #include "Runtime/Engine/Classes/Engine/DataTable.h"
 #include "BSCoreTypes.generated.h"
 
-class ABSBaseWeapon;
 
 // DELEGATE
 //
@@ -18,10 +17,13 @@ DECLARE_MULTICAST_DELEGATE(FOnDeath)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChange,float,float)
 //Pickup
 DECLARE_MULTICAST_DELEGATE(FOnPickupTakenSignature)
+//GameMode
+DECLARE_TS_MULTICAST_DELEGATE_OneParam(FOnMatchStateChangedSignature, EBSMatchState);
+//Menu
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnLevelSelectedSignature, const FLevelData&)
 //
 // STRUCT
-//
-//Player
+//Input
 USTRUCT(Blueprintable)
 struct FInputData
 {
@@ -69,20 +71,7 @@ struct FAmmoData
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapom", meta = (ToolTip = "All remaining bullets in clip while reload are not returned"))
 	bool IgnoreRemainingBullets;
 };
-USTRUCT(Blueprintable)
-struct FWeaponData
-{
-	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	TSubclassOf<ABSBaseWeapon> WeaponClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	UAnimMontage* ReloadAnimation;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	bool Replaceable = false;
-};
 USTRUCT(Blueprintable)
 struct FWeaponUIData
 {
@@ -182,6 +171,15 @@ struct FGameData
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Game")
 	TArray<FTeamData> TeamsData;
 };
+UENUM(Blueprintable)
+enum class EBSMatchState : uint8
+{
+	WaitingToStart,
+	Pause,
+	InProgress,
+	GameOver,
+};
+
 // Data
 USTRUCT(BlueprintType)
 struct FTipsData : public FTableRowBase
@@ -194,6 +192,22 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	FString TipDescription;
+};
+//Menu
+
+USTRUCT(Blueprintable)
+struct FLevelData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Game")
+	FName LevelName = NAME_Name;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Game")
+	FName DisplayLevelName = NAME_Name;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Game")
+	UTexture2D* LevelThumb = nullptr;
 };
 
  
