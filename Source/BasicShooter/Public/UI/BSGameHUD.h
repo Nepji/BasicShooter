@@ -30,10 +30,10 @@ protected:
 
 private:
 	UPROPERTY()
-	TMap<EBSMatchState, UUserWidget*> GameWidgets;
+	TMap<EBSMatchState, UBSBaseWidget*> GameWidgets;
 	
 	UPROPERTY()
-	UUserWidget* CurrentWidget = nullptr;
+	UBSBaseWidget* CurrentWidget = nullptr;
 private:
 	void OnMatchStateChanged(EBSMatchState State);
 };

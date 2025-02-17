@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BSBaseWidget.h"
 #include "BSCoreTypes.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
@@ -14,7 +15,7 @@ class UVerticalBox;
  *
  */
 UCLASS()
-class BASICSHOOTER_API UBSGameOverHUDWidget : public UUserWidget
+class BASICSHOOTER_API UBSGameOverHUDWidget : public UBSBaseWidget
 {
 	GENERATED_BODY()
 

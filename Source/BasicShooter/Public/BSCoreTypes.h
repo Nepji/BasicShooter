@@ -60,16 +60,16 @@ struct FAmmoData
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapom", meta = (EditCondition = "!Infinite"))
-	int32 BulletAmount;
+	int32 BulletAmount = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapom")
-	int32 BulletsInClip;
+	int32 BulletsInClip = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapom", meta = (ToolTip = "Infinite bullets"))
-	bool Infinite;
+	bool Infinite = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapom", meta = (ToolTip = "All remaining bullets in clip while reload are not returned"))
-	bool IgnoreRemainingBullets;
+	bool IgnoreRemainingBullets = false;
 };
 
 USTRUCT(Blueprintable)
@@ -78,10 +78,10 @@ struct FWeaponUIData
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "UI")
-	UTexture2D* MainIcon;
+	UTexture2D* MainIcon = nullptr;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "UI")
-	UTexture2D* CrossHairIcon;
+	UTexture2D* CrossHairIcon = nullptr;
 };
 // Health Component
 USTRUCT(Blueprintable)
@@ -111,7 +111,7 @@ struct FDecalData
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
-	UMaterialInterface* Material;
+	UMaterialInterface* Material = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
 	FVector Size = FVector(10.0f);
@@ -128,7 +128,7 @@ struct FImpactData
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
-	UNiagaraSystem* NiagaraEffect;
+	UNiagaraSystem* NiagaraEffect = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
 	FDecalData DecalData;
@@ -143,7 +143,7 @@ struct FTeamData
 	FString TeamName;
 	
 	UPROPERTY(EditDefaultsOnly,Blueprintable)
-	FLinearColor TeamColor;
+	FLinearColor TeamColor = FLinearColor::Green;
 };
 USTRUCT(Blueprintable)
 struct FGameData

@@ -55,7 +55,14 @@ void ABSBaseWeapon::MakeShot()
 	}
 	if (AActor* Enemy = Cast<AActor>(HitResult.GetActor()))
 	{
-		UGameplayStatics::ApplyPointDamage(Enemy, Damage, TraceStart, HitResult, GetController(), this, nullptr);
+		UGameplayStatics::ApplyPointDamage(
+			Enemy,//
+			Damage, //
+			TraceStart, //
+			HitResult, //
+			GetController(), //
+			this, //
+			UDamageType::StaticClass());
 	}
 	DecreaseAmmo();
 	SpawnTraceFX(GetMuzzleWorldLocation(), TraceFXEnd);

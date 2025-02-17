@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BSBaseWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "BSPauseHUDWidget.generated.h"
 
@@ -11,7 +12,7 @@ class UButton;
  *
  */
 UCLASS()
-class BASICSHOOTER_API UBSPauseWidget : public UUserWidget
+class BASICSHOOTER_API UBSPauseWidget : public UBSBaseWidget
 {
 	GENERATED_BODY()
 

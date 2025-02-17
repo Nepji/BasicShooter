@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BSBaseWidget.h"
 #include "BSCoreTypes.h"
 #include "Blueprint/UserWidget.h"
 #include "BSPlayerHUDWidget.generated.h"
@@ -13,7 +14,7 @@ struct FAmmoData;
  *
  */
 UCLASS()
-class BASICSHOOTER_API UBSPlayerHUDWidget : public UUserWidget
+class BASICSHOOTER_API UBSPlayerHUDWidget : public UBSBaseWidget
 {
 	GENERATED_BODY()
 
@@ -51,6 +52,9 @@ public:
 
 	virtual void NativeOnInitialized() override;
 
+protected:
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* DamageAnimation;
 private:
 	void OnNewPawn(APawn* Pawn);
 	void OnHealthChange(float Health, float HealthDelta);

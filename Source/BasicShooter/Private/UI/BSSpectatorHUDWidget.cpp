@@ -54,5 +54,5 @@ void UBSSpectatorHUDWidget::NextTip()
 		return;
 	}
 	RowTipsNames = TipsDataRowHandle.DataTable->GetRowNames();
-	CurrentTipID = FMath::RandRange(0,RowTipsNames.Num());
+	CurrentTipID = FMath::RandRange(0,RowTipsNames.Num()-1);
 }

@@ -4,9 +4,7 @@
 #include "Utilities/AssetUtility.h"
 
 #ifdef WITH_EDITOR
-
-#include "EditorUtilityLibrary.h"
-#include "Subsystems/EditorAssetSubsystem.h"
+//#include "EditorUtilityLibrary.h"
 #endif
 
 FString UAssetUtility::NewPrefix(UObject *Obj) {
@@ -72,7 +70,7 @@ FString UAssetUtility::ChangedPrefix(FString Name, const FString& CorrectPrefix)
 void UAssetUtility::RenameAsset(UObject* Asset, const FString& NewName)
 {
 #ifdef WITH_EDITOR
-	UEditorUtilityLibrary::RenameAsset(Asset, NewName);
+	//UEditorUtilityLibrary::RenameAsset(Asset, NewName);
 #endif
 }
 
@@ -92,7 +90,7 @@ void UAssetUtility::SetPrefix() {
 TArray<UObject*> UAssetUtility::SelectedAssetsArray()
 {
 #ifdef WITH_EDITOR
-  return UEditorUtilityLibrary::GetSelectedAssets();
+  return TArray<UObject*>(); // UEditorUtilityLibrary::GetSelectedAssets();
 #endif
 }
 

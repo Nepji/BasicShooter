@@ -12,7 +12,7 @@ public class BasicShooter : ModuleRules
 		{
 			PublicDependencyModuleNames.AddRange(new string[]
 			{
-				"Blutility"
+				//"Blutility"
 			});
 		}
 
@@ -27,10 +27,10 @@ public class BasicShooter : ModuleRules
 			"PhysicsCore", 
 			"AIModule",
 			"GameplayTasks",
-			"NavigationSystem"
+			"NavigationSystem",
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput", "Blutility" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput" });
 
 		PublicIncludePaths.AddRange(new string[] { "BasicShooter/Public/Game" });
 

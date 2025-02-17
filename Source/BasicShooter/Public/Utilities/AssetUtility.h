@@ -7,12 +7,19 @@
 
 
 #ifdef WITH_EDITOR
-#include "Editor/Blutility/Classes/AssetActionUtility.h"
+//#include "Editor/Blutility/Classes/AssetActionUtility.h"
+#else
+//#include "FakeUtil/Public/AssetActionUtility.h"
+//#include "FakeUtil/Public/EditorUtilityLibrary.h"
 #endif
+
 #include "AssetUtility.generated.h"
 
+
+
+
 UCLASS(BlueprintType,Blueprintable)
-class BASICSHOOTER_API UAssetUtility : public UAssetActionUtility
+class BASICSHOOTER_API UAssetUtility : public UObject // UAssetActionUtility
 {
 	GENERATED_BODY()
 	

@@ -22,14 +22,24 @@ void UBSMenuWidget::NativeOnInitialized()
 
 	InitLevelItems();
 }
-void UBSMenuWidget::OnStartGame()
+void UBSMenuWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
 {
+	if(Animation != HideAnimation)
+	{
+		return;
+	}
+	
 	const auto BSGameInstance = GetBaseGameInstance();
 	if(!BSGameInstance)
 	{
 		return;
 	}
+	
 	UGameplayStatics::OpenLevel(this, BSGameInstance->GetStartupLevel().LevelName);
+}
+void UBSMenuWidget::OnStartGame()
+{
+	PlayAnimation(HideAnimation);
 }
 void UBSMenuWidget::OnQuitGame()
 {

@@ -17,9 +17,9 @@ void ABSGameHUD::BeginPlay()
 	check(PlayerPauseWidgetClass);
 	check(GameOverWidgetClass);
 	
-	GameWidgets.Add(EBSMatchState::InProgress, CreateWidget<UUserWidget>(GetWorld(),PlayerHUDWidgetClass));
-	GameWidgets.Add(EBSMatchState::Pause, CreateWidget<UUserWidget>(GetWorld(),PlayerPauseWidgetClass));
-	GameWidgets.Add(EBSMatchState::GameOver, CreateWidget<UUserWidget>(GetWorld(),GameOverWidgetClass));
+	GameWidgets.Add(EBSMatchState::InProgress, CreateWidget<UBSBaseWidget>(GetWorld(),PlayerHUDWidgetClass));
+	GameWidgets.Add(EBSMatchState::Pause, CreateWidget<UBSBaseWidget>(GetWorld(),PlayerPauseWidgetClass));
+	GameWidgets.Add(EBSMatchState::GameOver, CreateWidget<UBSBaseWidget>(GetWorld(),GameOverWidgetClass));
 	
 
 	for(const auto GameWidgetPair : GameWidgets)
@@ -52,5 +52,6 @@ void ABSGameHUD::OnMatchStateChanged(EBSMatchState State)
 	{
 		CurrentWidget = GameWidgets[State];
 		CurrentWidget->SetVisibility(ESlateVisibility::Visible);
+		CurrentWidget->Show();
 	}
 }

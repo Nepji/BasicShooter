@@ -6,6 +6,7 @@
 #include "BSCoreTypes.h"
 
 #include "Blueprint/UserWidget.h"
+#include "UI/BSBaseWidget.h"
 #include "BSMenuWidget.generated.h"
 
 class UBSBaseGameInstance;
@@ -16,7 +17,7 @@ class UButton;
  *
  */
 UCLASS()
-class BASICSHOOTER_API UBSMenuWidget : public UUserWidget
+class BASICSHOOTER_API UBSMenuWidget : public UBSBaseWidget
 {
 	GENERATED_BODY()
 protected:
@@ -28,11 +29,15 @@ protected:
 	
 	UPROPERTY(meta = (BindWidget))
 	UHorizontalBox* LevelItemBox;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* HideAnimation;
 	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "UI")
 	TSubclassOf<UUserWidget> LevelItemWidgetClass;
 protected:
 	virtual void NativeOnInitialized() override;
+	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
 
 private:
 	UPROPERTY()
