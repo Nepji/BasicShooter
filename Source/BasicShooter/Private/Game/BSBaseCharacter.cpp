@@ -10,6 +10,8 @@
 #include "Components/BSWeaponComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 ABSBaseCharacter::ABSBaseCharacter(const FObjectInitializer& ObjInit)
 	: Super(ObjInit.SetDefaultSubobjectClass<UBSMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -68,6 +70,7 @@ void ABSBaseCharacter::SetPlayerColor(FLinearColor Color) const
 
 void ABSBaseCharacter::OnDeath()
 {
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(),DeathSound,GetActorLocation());
 	GetCharacterMovement()->DisableMovement();
 	SetLifeSpan(ToDestroyTimer);
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);

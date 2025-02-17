@@ -9,6 +9,8 @@
 #include "Animation/AnimUtils.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 #include "Weapon/BSBaseWeapon.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All, All)
@@ -71,12 +73,15 @@ void UBSWeaponComponent::EquipWeapon(int32 WeaponIndex)
 			AttachWeaponToSocket(CurrentWeapon, Character->GetMesh(), CurrentWeaponSocket(CurrentWeapon->GetClass()));
 		}
 		CurrentWeapon = Weapons[WeaponIndex];
-		CurrentReloadAnimation = WeaponsData.FindByPredicate(
+
+		const auto Data = WeaponsData.FindByPredicate(
 											   [&](const FWeaponData& Data) {
 												   return Data.WeaponClass == CurrentWeapon->GetClass();
-											   })
-									 ->ReloadAnimation;
-		if(!CurrentReloadAnimation)
+											   });
+		CurrentReloadAnimation = Data->ReloadAnimation;
+		CurrentReloadSound = Data->ReloadSound;
+		
+		if(!CurrentReloadAnimation || !CurrentReloadSound)
 		{
 			return;
 		}
@@ -293,6 +298,13 @@ void UBSWeaponComponent::ChangeClip()
 		return;
 	}
 	CurrentWeapon->StopFire();
+
+	const auto Character = Cast<ABSBaseCharacter>(GetOwner());
+	if(!Character)
+	{
+		return;
+	}
+	UGameplayStatics::SpawnSoundAttached(CurrentReloadSound, Character->GetMesh(), WeaponAttachSocket);
 	ReloadAnimationInProgress = true;
 	PlayAnimMontage(CurrentReloadAnimation);
 }

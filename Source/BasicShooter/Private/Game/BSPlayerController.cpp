@@ -2,6 +2,7 @@
 
 #include "BSPlayerController.h"
 
+#include "BSBaseGameInstance.h"
 #include "BSCoreTypes.h"
 #include "BSGameModeBase.h"
 #include "EnhancedInputComponent.h"
@@ -43,6 +44,7 @@ void ABSPlayerController::SetupInputComponent()
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &ABSPlayerController::EnhancedInputPause);
+		EnhancedInputComponent->BindAction(GameMuteAction, ETriggerEvent::Triggered, this, &ABSPlayerController::EnhancedInputSoundMute);
 	}
 }
 void ABSPlayerController::EnhancedInputPause()
@@ -55,14 +57,23 @@ void ABSPlayerController::EnhancedInputPause()
 }
 void ABSPlayerController::OnMatchStateChanged(EBSMatchState State)
 {
-	if(State == EBSMatchState::Pause || State == EBSMatchState::GameOver)
+	if (State == EBSMatchState::Pause || State == EBSMatchState::GameOver)
 	{
 		SetInputMode(FInputModeUIOnly());
 		bShowMouseCursor = true;
 	}
-	else if(State == EBSMatchState::InProgress || State == EBSMatchState::WaitingToStart)
+	else if (State == EBSMatchState::InProgress || State == EBSMatchState::WaitingToStart)
 	{
 		SetInputMode(FInputModeGameOnly());
 		bShowMouseCursor = false;
 	}
+}
+void ABSPlayerController::EnhancedInputSoundMute()
+{
+	if(!GetWorld())
+	{
+		return;
+	}
+	const auto BSGameInstance = GetWorld()->GetGameInstance<UBSBaseGameInstance>();
+	BSGameInstance->ToggleVolume();
 }

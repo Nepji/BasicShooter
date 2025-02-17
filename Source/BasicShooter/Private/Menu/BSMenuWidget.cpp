@@ -7,6 +7,7 @@
 #include "Components/HorizontalBox.h"
 #include "Kismet/GameplayStatics.h"
 #include "Menu/BSMenuLevelItemWidget.h"
+#include "Sound/SoundCue.h"
 void UBSMenuWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -40,6 +41,7 @@ void UBSMenuWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* A
 void UBSMenuWidget::OnStartGame()
 {
 	PlayAnimation(HideAnimation);
+	UGameplayStatics::PlaySound2D(GetWorld(), StartGameSound);
 }
 void UBSMenuWidget::OnQuitGame()
 {

@@ -6,6 +6,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 ABSBaseWeapon::ABSBaseWeapon()
 {
@@ -66,6 +67,8 @@ void ABSBaseWeapon::MakeShot()
 	}
 	DecreaseAmmo();
 	SpawnTraceFX(GetMuzzleWorldLocation(), TraceFXEnd);
+	UGameplayStatics::SpawnSoundAttached(FireSound, MeshComponent, MuzzleSocketName);
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(),ImpactSound,TraceEnd);
 	WeaponFXComponent->PlayImpactFX(HitResult);
 }
 bool ABSBaseWeapon::CanReload() const

@@ -13,6 +13,7 @@ class UBSBaseGameInstance;
 class UHorizontalBox;
 class UBSMenuLevelItemWidget;
 class UButton;
+class USoundCue;
 /**
  *
  */
@@ -32,7 +33,12 @@ protected:
 
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* HideAnimation;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Sound")
+	USoundCue* StartGameSound;
 	
+
+	 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "UI")
 	TSubclassOf<UUserWidget> LevelItemWidgetClass;
 protected:

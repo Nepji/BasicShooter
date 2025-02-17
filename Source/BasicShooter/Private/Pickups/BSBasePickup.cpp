@@ -6,6 +6,8 @@
 #include "BSCoreUtils.h"
 #include "Components/BSHealthComponent.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBasePickup, All, All);
 
@@ -49,7 +51,8 @@ void ABSBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
 }
 bool ABSBasePickup::PickUpTo(APawn* PlayerPawn)
 {
-	return false;
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(),PickupSound,GetActorLocation());
+	return true;
 }
 
 void ABSBasePickup::Tick(float DeltaTime)

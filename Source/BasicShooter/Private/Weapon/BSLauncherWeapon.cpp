@@ -3,6 +3,7 @@
 #include "Weapon/BSLauncherWeapon.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 #include "Weapon/BSProjectile.h"
 
 void ABSLauncherWeapon::MakeShot()
@@ -21,7 +22,7 @@ void ABSLauncherWeapon::MakeShot()
 	MakeHit(HitResult, TraceStart, TraceEnd);
 
 	const FVector EndPoint = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
-	const FVector Direction = (EndPoint - GetMuzzleWorldLocation().GetSafeNormal());
+	const FVector Direction = (EndPoint - GetMuzzleWorldLocation()).GetSafeNormal();
 
 	const FTransform SpawnTransform(FRotator::ZeroRotator, GetMuzzleWorldLocation());
 	if (auto Projectile = GetWorld()->SpawnActorDeferred<ABSProjectile>(ProjectileClass, SpawnTransform))
@@ -31,6 +32,7 @@ void ABSLauncherWeapon::MakeShot()
 		Projectile->FinishSpawning(SpawnTransform);
 	}
 	SpawnTraceFX(GetMuzzleWorldLocation(),EndPoint);
+	UGameplayStatics::SpawnSoundAttached(FireSound, MeshComponent, MuzzleSocketName);
 	DecreaseAmmo();
 	SpawnMuzzleFX();
 }

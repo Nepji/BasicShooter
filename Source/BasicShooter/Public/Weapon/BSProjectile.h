@@ -9,6 +9,10 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "BSProjectile.generated.h"
 
+
+class USoundCue;
+
+
 UCLASS()
 class BASICSHOOTER_API ABSProjectile : public AActor
 {
@@ -45,6 +49,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
 	UBSWeaponFXComponent* WeaponFXComponent;
+	
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Sound")
+	USoundCue* ImpactSound = nullptr;
 protected:
 	UFUNCTION()
 	void OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

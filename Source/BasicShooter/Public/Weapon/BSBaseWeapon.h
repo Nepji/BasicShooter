@@ -9,7 +9,7 @@
 #include "BSBaseWeapon.generated.h"
 
 
-
+class USoundCue;
 
 
 UCLASS(Abstract)
@@ -70,6 +70,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
 	FString TraceTargetName = "TraceTarget";
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Sound")
+	USoundCue* FireSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Sound")
+	USoundCue* ImpactSound = nullptr;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -87,5 +93,6 @@ protected:
 
 private:
 	FAmmoData CurrentAmmo;
+
 	
 };

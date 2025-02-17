@@ -26,6 +26,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Input")
 	UInputAction* PauseAction;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Input")
+	UInputAction* GameMuteAction;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UBSRespawnComponent* RespawnComponent;
@@ -39,4 +42,5 @@ protected:
 private:
 	void EnhancedInputPause();
 	void OnMatchStateChanged(EBSMatchState State);
+	void EnhancedInputSoundMute();
 };

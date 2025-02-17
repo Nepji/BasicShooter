@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "BSBasePickup.h"
+#include "Components/BSWeaponComponent.h"
 #include "BSWeaponPickup.generated.h"
+
 
 UCLASS()
 class BASICSHOOTER_API ABSWeaponPickup : public ABSBasePickup

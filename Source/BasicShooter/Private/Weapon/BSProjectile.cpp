@@ -5,6 +5,7 @@
 
 #include "Components/BSWeaponFXComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 ABSProjectile::ABSProjectile()
 {
@@ -47,6 +48,7 @@ void ABSProjectile::OnProjectileHit(
 		CentreFullDamage);			//
 	DrawDebugSphere(GetWorld(),GetActorLocation(),DamageRadius,24,FColor::Red,false, 5.0f);
 	WeaponFXComponent->PlayImpactFX(Hit);
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(),ImpactSound,GetActorLocation());
 	Destroy();
 }
 void ABSProjectile::BeginPlay()

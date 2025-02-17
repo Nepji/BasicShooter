@@ -8,6 +8,8 @@
 #include "GameFramework/Actor.h"
 #include "BSBasePickup.generated.h"
 
+class USoundCue;
+
 UCLASS()
 class BASICSHOOTER_API ABSBasePickup : public AActor
 {
@@ -27,6 +29,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Pickup")
 	UStaticMeshComponent* MeshComponent;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Sound")
+	USoundCue* PickupSound = nullptr;
 
 protected:
 	virtual void BeginPlay() override;

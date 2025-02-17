@@ -7,6 +7,8 @@
 #include "Weapon/BSBaseWeapon.h"
 #include "BSWeaponComponent.generated.h"
 
+class USoundCue;
+
 USTRUCT(Blueprintable)
 struct FWeaponData
 {
@@ -20,6 +22,9 @@ struct FWeaponData
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	bool Replaceable = false;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+	USoundCue* ReloadSound;
 
 
 	bool operator==(const FWeaponData& Data) const
@@ -94,6 +99,9 @@ protected:
 private:
 	UPROPERTY()
 	UAnimMontage* CurrentReloadAnimation = nullptr;
+
+	UPROPERTY()
+	USoundCue* CurrentReloadSound = nullptr;
 private:
 	bool EquipAnimationInProgress = false;
 	bool ReloadAnimationInProgress = false;

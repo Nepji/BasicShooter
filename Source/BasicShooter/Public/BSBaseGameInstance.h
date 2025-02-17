@@ -23,12 +23,17 @@ public:
 	TArray<FLevelData> GetLevelsData();
 	FName GetMenuLevelName() const;
 
+	void ToggleVolume() const;
+
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Level")
 	TArray<FLevelData> LevelsData;
 	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Level")
 	FName MenuLevelName = NAME_None;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category = "Sound")
+	USoundClass* MasterSoundClass;
 
 
 private:

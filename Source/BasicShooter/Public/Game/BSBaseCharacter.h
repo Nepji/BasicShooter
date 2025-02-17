@@ -9,6 +9,7 @@
 
 class UBSHealthComponent;
 class UBSWeaponComponent;
+class USoundCue;
 
 UCLASS()
 class BASICSHOOTER_API ABSBaseCharacter : public ACharacter
@@ -40,8 +41,11 @@ protected:
 	UAnimMontage* DeathAnimMontage;	
 
 	UPROPERTY(EditDefaultsOnly,Blueprintable, Category = "Material")
-	FName MaterialColorName = "Color"; 
+	FName MaterialColorName = "Color";
 
+	UPROPERTY(EditDefaultsOnly,Blueprintable, Category = "Sound")
+	USoundCue* DeathSound;
+	
 protected:
 	bool isRunningState;
 protected:

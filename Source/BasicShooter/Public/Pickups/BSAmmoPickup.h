@@ -6,8 +6,9 @@
 #include "Pickups/BSBasePickup.h"
 #include "BSAmmoPickup.generated.h"
 
+class ABSBaseWeapon;
 /**
- * 
+ *
  */
 UCLASS()
 class BASICSHOOTER_API ABSAmmoPickup : public ABSBasePickup
