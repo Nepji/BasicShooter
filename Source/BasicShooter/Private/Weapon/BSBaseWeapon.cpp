@@ -30,6 +30,20 @@ void ABSBaseWeapon::StartFire()
 void ABSBaseWeapon::StopFire()
 {
 }
+void ABSBaseWeapon::MakeDamage(const FHitResult& HitResult)
+{
+	if (const auto DamagedActor = HitResult.GetActor())
+	{
+		UGameplayStatics::ApplyPointDamage(
+			DamagedActor,		   //
+			Damage,				   //
+			HitResult.ImpactPoint, //
+			HitResult,			   //
+			GetController(),	   //
+			this,				   //
+			UDamageType::StaticClass());
+	}
+}
 
 void ABSBaseWeapon::MakeShot()
 {
@@ -53,23 +67,13 @@ void ABSBaseWeapon::MakeShot()
 	if (HitResult.bBlockingHit)
 	{
 		TraceFXEnd = HitResult.ImpactPoint;
-	}
-	if (AActor* Enemy = Cast<AActor>(HitResult.GetActor()))
-	{
-		UGameplayStatics::ApplyPointDamage(
-			Enemy,//
-			Damage, //
-			TraceStart, //
-			HitResult, //
-			GetController(), //
-			this, //
-			UDamageType::StaticClass());
+		MakeDamage(HitResult);
+		WeaponFXComponent->PlayImpactFX(HitResult);
 	}
 	DecreaseAmmo();
 	SpawnTraceFX(GetMuzzleWorldLocation(), TraceFXEnd);
 	UGameplayStatics::SpawnSoundAttached(FireSound, MeshComponent, MuzzleSocketName);
-	UGameplayStatics::SpawnSoundAtLocation(GetWorld(),ImpactSound,TraceEnd);
-	WeaponFXComponent->PlayImpactFX(HitResult);
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), ImpactSound, TraceEnd);
 }
 bool ABSBaseWeapon::CanReload() const
 {

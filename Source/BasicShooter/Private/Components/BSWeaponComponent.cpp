@@ -389,5 +389,5 @@ bool UBSWeaponComponent::TryPickupWeapon(const FWeaponData& WeaponData)
 	}
 	SpawnOneWeapon(WeaponData);
 
-	return false;
+	return true;
 }

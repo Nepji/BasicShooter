@@ -89,7 +89,7 @@ protected:
 	void ChangeClip();
 	void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd) const;
 	UNiagaraComponent* SpawnMuzzleFX() const;
-	
+	void MakeDamage(const FHitResult& HitResult);
 
 private:
 	FAmmoData CurrentAmmo;

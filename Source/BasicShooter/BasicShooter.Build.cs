@@ -12,7 +12,7 @@ public class BasicShooter : ModuleRules
 		{
 			PublicDependencyModuleNames.AddRange(new string[]
 			{
-				//"Blutility"
+				"Blutility"
 			});
 		}
 
