@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <div align="center">
 
 [![BasicShooter][repo_logo_img]][repo_url]
