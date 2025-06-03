@@ -63,7 +63,8 @@ private:
 
 	void CreateTeamInfo() const;
 	static void SetPlayerColor(const AController* Controller);
-	FLinearColor DetermineColorByTeamID(int32 ID) const;
+	FLinearColor DetermineColorByTeamID(const int32 ID) const;
+	FString DetermineTeamNameByTeamID(const int32 ID) const;
 
 	void StartRespawn(AController* Controller) const;
 

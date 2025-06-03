@@ -48,6 +48,7 @@ EBTNodeResult::Type UBSNextLocationTask::ExecuteTask(UBehaviorTreeComponent& Own
 	{
 		return EBTNodeResult::Failed;
 	}
+	
 	Blackboard->SetValueAsVector(AimLocationKey.SelectedKeyName, NavLocation.Location);
 	return EBTNodeResult::Succeeded;
 }

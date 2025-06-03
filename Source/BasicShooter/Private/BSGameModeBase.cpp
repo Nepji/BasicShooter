@@ -202,6 +202,7 @@ void ABSGameModeBase::CreateTeamInfo() const
 		}
 
 		PlayerState->SetTeamID(TeamID);
+		PlayerState->SetTeamName(DetermineTeamNameByTeamID(TeamID));
 		PlayerState->SetTeamColor(DetermineColorByTeamID(TeamID));
 		PlayerState->SetPlayerName(Controller->IsPlayerController()? "Player" : "Bot");
 		SetPlayerColor(Controller);
@@ -233,7 +234,7 @@ void ABSGameModeBase::SetPlayerColor(const AController* Controller)
 
 	Character->SetPlayerColor(PlayerState->GetTeamColor());
 } 
-FLinearColor ABSGameModeBase::DetermineColorByTeamID(int32 ID) const
+FLinearColor ABSGameModeBase::DetermineColorByTeamID( const int32 ID) const
 {
 	if (ID < GameData.TeamsData.Num() && ID >= 0)
 	{
@@ -241,6 +242,16 @@ FLinearColor ABSGameModeBase::DetermineColorByTeamID(int32 ID) const
 	}
 	UE_LOG(LogGameMode, Warning, TEXT("Team color not found, ID: %i invalid, set to default: %s"), ID, *GameData.DefaultTeamData.TeamColor.ToString());
 	return GameData.DefaultTeamData.TeamColor;
+}
+FString ABSGameModeBase::DetermineTeamNameByTeamID(const int32 ID) const
+{
+	if (ID < GameData.TeamsData.Num() && ID >= 0)
+	{
+		return GameData.TeamsData[ID].TeamName;
+	}
+
+	UE_LOG(LogGameMode, Warning, TEXT("Team name not found, ID: %i invalid, set to default: %s"), ID, *GameData.DefaultTeamData.TeamName);
+	return GameData.DefaultTeamData.TeamName;
 }
 void ABSGameModeBase::StartRespawn(AController* Controller) const
 {
