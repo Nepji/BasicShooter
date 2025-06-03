@@ -40,14 +40,14 @@ The following section provides a quick visual walkthrough of the game's core fea
 
 [repo_url]: https://github.com/Nepji/BasicShooter
 [repo_logo_url]: https://github.com/Nepji/BasicShooter
-[repo_logo_img]: 
+[repo_logo_img]: https://github.com/Nepji/BasicShooter/blob/main/.github/images/LevelSelector.jpg
 <!-- Project -->
 
-[menu_gif]: https://github.com/Nepji/BasicShooter
-[shooting_gif]: https://github.com/Nepji/BasicShooter
-[pickup_gif]: https://github.com/Nepji/BasicShooter
-[death_gif]: https://github.com/Nepji/BasicShooter
-[gameover_gif]: https://github.com/Nepji/BasicShooter
+[menu_gif]: https://github.com/Nepji/BasicShooter/blob/main/.github/images/LevelSelector.gif
+[shooting_gif]: https://github.com/Nepji/BasicShooter/blob/main/.github/images/SHOOTING.gif
+[pickup_gif]: https://github.com/Nepji/BasicShooter/blob/main/.github/images/LauncherPickUp.gif
+[death_gif]: https://github.com/Nepji/BasicShooter/blob/main/.github/images/Death-Window.gif
+[gameover_gif]: https://github.com/Nepji/BasicShooter/blob/main/.github/images/GameOver.gif
 
 <!-- Author -->
 
