@@ -3,7 +3,7 @@
 
 [![BasicShooter][repo_logo_img]][repo_url]
 
-A third-person shooter game developed with Unreal Engine 5, featuring dynamic gunplay, round-based scoring, AI enemies, and item pickups. This project delivers a solid foundation for an action-packed experience, combining immersive visuals with core gameplay systems.
+A third-person shooter game developed with Unreal Engine 5 using C++, featuring dynamic gunplay, round-based scoring, AI enemies, and item pickups. This project delivers a solid foundation for an action-packed experience, combining immersive visuals with core gameplay systems.
 
 </div>
 
